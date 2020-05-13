@@ -67,6 +67,7 @@ struct message_header_s {
 - 'B': Flag bitset message.
   
       struct ulog_message_flag_bits_s {
+        struct message_header_s;
         uint8_t compat_flags[8];
         uint8_t incompat_flags[8];
         uint64_t appended_offsets[3]; ///< file offset(s) for appended data if appending bit is set
@@ -225,7 +226,47 @@ The following messages belong to this section:
 | INFO    | '6'         | Informational                    |
 | DEBUG   | '7'         | Debug-level messages             |
 
-- 'S': synchronization message so that a reader can recover from a corrupt message by searching for the next sync message (not used currently).
+- 'C': Tagged Logged string message
+  
+      struct message_logging_tagged_s {
+        struct message_header_s header;
+        uint8_t log_level;
+        uint16_t tag;
+        uint64_t timestamp;
+        char message[header.msg_size-9]
+      };
+      
+  
+  `tag`: id representing source of logged message string. It could represent a process, thread or a class depending upon the system architecture. For example, a reference implementation for an onboard computer running multiple processes to control different payloads, external disks, serial devices etc can encode these process identifiers using a `uint16_t enum` into the tag attribute of `message_logging_tagged_s` struct as follows:
+  
+      enum class ulog_tag : uint16_t {
+        unassigned,
+        mavlink_handler,
+        ppk_handler,
+        camera_handler,
+        ptp_handler,
+        serial_handler,
+        watchdog,
+        io_service,
+        cbuf,
+        ulg
+      };
+      
+  
+  `timestamp`: in microseconds `log_level`: same as in the Linux kernel:
+
+| Name    | Level value | Meaning                          |
+| ------- | ----------- | -------------------------------- |
+| EMERG   | '0'         | System is unusable               |
+| ALERT   | '1'         | Action must be taken immediately |
+| CRIT    | '2'         | Critical conditions              |
+| ERR     | '3'         | Error conditions                 |
+| WARNING | '4'         | Warning conditions               |
+| NOTICE  | '5'         | Normal but significant condition |
+| INFO    | '6'         | Informational                    |
+| DEBUG   | '7'         | Debug-level messages             |
+
+- 'S': synchronization message so that a reader can recover from a corrupt message by searching for the next sync message.
   
       struct message_sync_s {
         struct message_header_s header;
@@ -233,7 +274,7 @@ The following messages belong to this section:
       };
       
   
-  `sync_magic`: to be defined.
+  `sync_magic`: [0x2F, 0x73, 0x13, 0x20, 0x25, 0x0C, 0xBB, 0x12]
 
 - 'O': mark a dropout (lost logging messages) of a given duration in ms. Dropouts can occur e.g. if the device is not fast enough.
   
@@ -275,6 +316,7 @@ A valid ULog parser must fulfill the following requirements:
 - [mavlink-router](https://github.com/01org/mavlink-router): C++, ULog streaming via MAVLink.
 - [MAVGAnalysis](https://github.com/ecmnet/MAVGCL): Java, ULog streaming via MAVLink and parser for plotting and analysis.
 - [PlotJuggler](https://github.com/facontidavide/PlotJuggler): C++/Qt application to plot logs and time series. Supports ULog since version 2.1.3.
+- [ulogreader](https://github.com/maxsun/ulogreader): Javascript, ULog reader and parser outputs log in JSON object format. 
 
 ## File Format Version History
 

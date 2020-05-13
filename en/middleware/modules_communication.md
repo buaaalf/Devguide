@@ -118,9 +118,6 @@ micrortps_client <command> [arguments...]
      [-b <val>]  Baudrate (can also be p:<param_name>)
                  default: 460800
      [-p <val>]  Poll timeout for UART in ms
-     [-u <val>]  Interval in ms to limit the update rate of all sent topics
-                 (0=unlimited)
-                 default: 0
      [-l <val>]  Limit number of iterations until the program exits
                  (-1=infinite)
                  default: 10000
@@ -130,6 +127,8 @@ micrortps_client <command> [arguments...]
                  default: 2019
      [-s <val>]  Select UDP Network Port for sending (remote)
                  default: 2020
+     [-i <val>]  Select IP address (remote)
+                 values: <x.x.x.x>, default: 127.0.0.1
 
    stop
 
@@ -175,7 +174,8 @@ uorb <command> [arguments...]
    status        Print topic statistics
 
    top           Monitor topic publication rates
-     [-a]        print all instead of only currently publishing topics
+     [-a]        print all instead of only currently publishing topics with
+                 subscribers
      [-1]        run only once, then exit
      [<filter1> [<filter2>]] topic(s) to match (implies -a)
 ```

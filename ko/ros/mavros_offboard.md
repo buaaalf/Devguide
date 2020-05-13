@@ -1,6 +1,6 @@
-# MAVROS *Offboard* control example
+# MAVROS *Offboard* 제어 예제
 
-This tutorial shows the basics of *Offboard* control with MAVROS, using an Iris quadcopter simulated in Gazebo/SITL. At the end of the tutorial, you should see the same behaviour as in the video below, i.e. a slow takeoff to an altitude of 2 meters.
+이 튜토리얼은 Gazebo/SITL에서 동작하는 Iris 쿼드콥터를 사용하여 MAVROS를 통해 기본적인 *Offboard* 제어를 설명합니다. At the end of the tutorial, you should see the same behaviour as in the video below, i.e. a slow takeoff to an altitude of 2 meters.
 
 > **Caution** *Offboard* control is dangerous. If you are operating on a real vehicle be sure to have a way of gaining back manual control in case something goes wrong.
 
@@ -142,7 +142,7 @@ We instantiate a publisher to publish the commanded local position and the appro
 ros::Rate rate(20.0);
 ```
 
-The px4 flight stack has a timeout of 500ms between two *Offboard* commands. If this timeout is exceeded, the commander will fall back to the last mode the vehicle was in before entering *Offboard* mode. This is why the publishing rate **must** be faster than 2 Hz to also account for possible latencies. This is also the same reason why it is recommended to enter *Offboard* mode from *Position* mode, this way if the vehicle drops out of *Offboard* mode it will stop in its tracks and hover.
+PX4 has a timeout of 500ms between two *Offboard* commands. If this timeout is exceeded, the commander will fall back to the last mode the vehicle was in before entering *Offboard* mode. This is why the publishing rate **must** be faster than 2 Hz to also account for possible latencies. This is also the same reason why it is recommended to enter *Offboard* mode from *Position* mode, this way if the vehicle drops out of *Offboard* mode it will stop in its tracks and hover.
 
 ```cpp
 // wait for FCU connection

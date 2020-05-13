@@ -7,68 +7,22 @@ PX4 can be built on the console or in an IDE, for both simulated and hardware ta
 <span></span>
 > **Tip** For solutions to common build problems see [Troubleshooting](#troubleshooting) below.
 
-## Downloading PX4 Source Code {#get_px4_code}
+## Download the PX4 Source Code {#get_px4_code}
 
 The PX4 source code is stored on Github in the [PX4/Firmware](https://github.com/PX4/Firmware) repository.
-We recommend that you [fork](https://help.github.com/articles/fork-a-repo/) this repository (creating a copy associated with your own Github account), and then [clone](https://help.github.com/articles/cloning-a-repository/) the source to your local computer.
+To get the *very latest* version onto your computer, enter the following command into a terminal:
 
-> **Tip** Forking the repository allows you to better manage your custom code.
-  Later on you will be able to use *git* to share changes with the main project.
+```sh
+git clone https://github.com/PX4/Firmware.git --recursive
+```
 
-The steps to fork and clone the project source code are:
-
-1. [Sign up](https://github.com/) to Github.
-1. Go to the [Firmware](https://github.com/PX4/Firmware) repository and click the **Fork** button near the upper right corner.
-   This will create and open the forked repository.
-
-   ![Github Fork button](../../assets/toolchain/github_fork.png)
-1. Copy the repository URL for your *Firmware* repository fork.
-   The easiest way to do this is to click the **Clone or download** button and then copy the URL:
-
-   ![Github Clone or download button](../../assets/toolchain/github_clone_or_download.png)
-1. Open a command prompt/terminal on your computer
-   * On OS X, hit ⌘-space and search for 'terminal'.
-   * On Ubuntu, click the launch bar and search for 'terminal'.
-   * On Windows, find the PX4 folder in the start menu and click on 'PX4 Console'.
-1. Clone the repository fork using the copied URL. This will look something like:
-   ```
-   git clone https://github.com/<youraccountname>/Firmware.git
-   ```
-   
-   > **Tip** If you're just experimenting (and don't want to make any sort of permanent changes) you can simply clone the main Firmware repository as shown:
-   >  ```sh
-   >  git clone https://github.com/PX4/Firmware.git
-   >  ```
-   
-   Windows users [refer to the Github help](https://help.github.com/desktop/guides/getting-started-with-github-desktop/installing-github-desktop/). 
-   You can use a *git* command line client as above or instead perform the same actions with the *Github for Windows* app.
-
-This will copy *most* of the *very latest* version of PX4 source code onto your computer 
-(the rest of the code is automatically fetched from other [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) when you build PX4).
-
-<span id="specific_version_source"></span>
-
-### Get a Specific Release
-
-To get the source code for a *specific older release*:
-1. Clone the Firmware repo and navigate into Firmware directory:
-   ```sh
-   git clone https://github.com/PX4/Firmware.git
-   cd Firmware
-   ```
-1. List all releases (tags)
-   ```sh
-   git tag -l
-   ```
-1. Checkout code for particular tag (e.g. for tag 1.7.4beta)
-   ```sh
-   git checkout v1.7.4beta
-   ```
+> **Note** This is all you need to do just to build the latest code. 
+  [GIT Examples > Contributing code to PX4](../contribute/git_examples.md#contributing_code) provides a lot more information about using git to contribute to PX4. 
 
 
 ## First Build (Using the jMAVSim Simulator) {#jmavsim_build}
 
-For the first build we'll build for a simulated target using a console environment.
+First we'll build a simulated target using a console environment.
 This allows us to validate the system setup before moving on to real hardware and an IDE.
 
 Navigate into the **Firmware** directory and start [jMAVSim](../simulation/jmavsim.md) using the following command:
@@ -126,20 +80,20 @@ A successful run will end with similar output to:
 
 The following list shows the build commands for common boards:
 * Pixhawk 4: `make px4_fmu-v5_default`
-* [Pixracer](https://docs.px4.io/en/flight_controller/pixracer.html): `make px4_fmu-v4_default`
-* [Pixhawk 3 Pro](https://docs.px4.io/en/flight_controller/pixhawk3_pro.html): `make px4_fmu-v4pro_default`
-* [Pixhawk Mini](https://docs.px4.io/en/flight_controller/pixhawk_mini.html): `make px4_fmu-v3_default`
-* [Pixhawk 2](https://docs.px4.io/en/flight_controller/pixhawk-2.html): `make px4_fmu-v3_default`
-* [mRo Pixhawk](https://docs.px4.io/en/flight_controller/mro_pixhawk.html): `make px4_fmu-v3_default` (supports 2MB Flash)
-* [HKPilot32](https://docs.px4.io/en/flight_controller/HKPilot32.html): `make px4_fmu-v2_default`
-* [Pixfalcon](https://docs.px4.io/en/flight_controller/pixfalcon.html): `make px4_fmu-v2_default`
-* [Dropix](https://docs.px4.io/en/flight_controller/dropix.html): `make px4_fmu-v2_default`
-* [MindPX](https://docs.px4.io/en/flight_controller/mindpx.html)/[MindRacer](https://docs.px4.io/en/flight_controller/mindracer.html): `make airmind_mindpx-v2_default`
-* [mRo X-2.1](https://docs.px4.io/en/flight_controller/mro_x2.1.html): `make auav_x21_default` 
-* [Crazyflie 2.0](https://docs.px4.io/en/flight_controller/crazyflie2.html): `make bitcraze_crazyflie_default`
-* [Intel® Aero Ready to Fly Drone](https://docs.px4.io/en/flight_controller/intel_aero.html): `make intel_aerofc-v1_default`
-* [Pixhawk 1](https://docs.px4.io/en/flight_controller/pixhawk.html): `make px4_fmu-v2_default`
-  > **Warning** You **must** use a [supported version of GCC](../setup/dev_env_linux_ubuntu.md#nuttx-based-hardware) to build this board (e.g. the same as used by [CI/docker](../test_and_ci/docker.md)) or remove modules from the build. Building with an unsupported GCC may fail, as PX4 is close to the board's 1MB flash limit.
+* [Pixracer](https://docs.px4.io/master/en/flight_controller/pixracer.html): `make px4_fmu-v4_default`
+* [Pixhawk 3 Pro](https://docs.px4.io/master/en/flight_controller/pixhawk3_pro.html): `make px4_fmu-v4pro_default`
+* [Pixhawk Mini](https://docs.px4.io/master/en/flight_controller/pixhawk_mini.html): `make px4_fmu-v3_default`
+* [Pixhawk 2](https://docs.px4.io/master/en/flight_controller/pixhawk-2.html): `make px4_fmu-v3_default`
+* [mRo Pixhawk](https://docs.px4.io/master/en/flight_controller/mro_pixhawk.html): `make px4_fmu-v3_default` (supports 2MB Flash)
+* [HKPilot32](https://docs.px4.io/master/en/flight_controller/HKPilot32.html): `make px4_fmu-v2_default`
+* [Pixfalcon](https://docs.px4.io/master/en/flight_controller/pixfalcon.html): `make px4_fmu-v2_default`
+* [Dropix](https://docs.px4.io/master/en/flight_controller/dropix.html): `make px4_fmu-v2_default`
+* [MindPX](https://docs.px4.io/master/en/flight_controller/mindpx.html)/[MindRacer](https://docs.px4.io/master/en/flight_controller/mindracer.html): `make airmind_mindpx-v2_default`
+* [mRo X-2.1](https://docs.px4.io/master/en/flight_controller/mro_x2.1.html): `make mro_x21_default` 
+* [Crazyflie 2.0](https://docs.px4.io/master/en/flight_controller/crazyflie2.html): `make bitcraze_crazyflie_default`
+* [Intel® Aero Ready to Fly Drone](https://docs.px4.io/master/en/flight_controller/intel_aero.html): `make intel_aerofc-v1_default`
+* [Pixhawk 1](https://docs.px4.io/master/en/flight_controller/pixhawk.html): `make px4_fmu-v2_default`
+  > **Warning** You **must** use a supported version of GCC to build this board (e.g. the same as used by [CI/docker](../test_and_ci/docker.md)) or remove modules from the build. Building with an unsupported GCC may fail, as PX4 is close to the board's 1MB flash limit.
 * Pixhawk 1 with 2 MB flash: `make px4_fmu-v3_default`
 
 > **Note** Generally the `_default` suffix is optional (i.e. you can also build using `make px4_fmu-v4`, `make bitcraze_crazyflie`, etc.).
@@ -171,29 +125,37 @@ The following boards have more complicated build and/or deployment instructions.
 
 ### Raspberry Pi 2/3 Boards
 
-The command below builds the target for [Raspberry Pi 2/3 Navio2](https://docs.px4.io/en/flight_controller/raspberry_pi_navio2.html).
+The command below builds the target for [Raspberry Pi 2/3 Navio2](https://docs.px4.io/master/en/flight_controller/raspberry_pi_navio2.html).
 
 #### Cross-compiler Build
 
-```sh
-cd Firmware
-make emlid_navio2_cross # for cross-compiler build
-```
-
-The "px4" executable file is in the directory **build/emlid_navio2_cross/**.
-Make sure you can connect to your RPi over ssh, see [instructions how to access your RPi](https://docs.px4.io/en/flight_controller/raspberry_pi_navio2.html#developer-quick-start).
-
-Then set the IP (or hostname) of your RPi using:
+Set the IP (or hostname) of your RPi using:
 
 ```sh
 export AUTOPILOT_HOST=192.168.X.X
 ```
+or
+```sh
+export AUTOPILOT_HOST=pi_hostname.domain
+```
 
-And upload it with:
+> **Note** The value of the environment variable should be set before the build, or `make upload` will fail to find your RPi.
+
+Build the executable file:
 
 ```sh
 cd Firmware
-make emlid_navio2_cross upload # for cross-compiler build
+make emlid_navio2 # for cross-compiler build
+```
+
+The "px4" executable file is in the directory **build/emlid_navio2_default/**.
+Make sure you can connect to your RPi over ssh, see [instructions how to access your RPi](https://docs.px4.io/master/en/flight_controller/raspberry_pi_navio2.html#developer-quick-start).
+
+Then upload it with:
+
+```sh
+cd Firmware
+make emlid_navio2 upload # for cross-compiler build
 ```
 
 Then, connect over ssh and run it with (as root):
@@ -244,95 +206,16 @@ cd /home/pi && ./bin/px4 -d -s px4.config > px4.log
 ```
 
 
-### Parrot Bebop
-
-Support for the [Parrot Bebop](https://docs.px4.io/en/flight_controller/bebop.html) is at an early stage and should be used very carefully.
-
-#### Build
-
-```sh
-cd Firmware
-make parrot_bebop
-```
-
-Turn on your Bebop and connect your host machine with the Bebop's wifi.
-Then, press the power button four times to enable ADB and to start the telnet daemon.
-
-```sh
-make parrot_bebop upload
-```
-
-This will upload the PX4 mainapp into /data/ftp/internal_000/px4/ and create the file /home/root/parameters if not already
-present.
-This also uploads the mixer file and the px4.config file into the /home/root/ directory.
-
-#### Run
-
-Connect to the Bebop's wifi and press the power button four times.
-Next, connect with the Bebop via telnet or adb shell and run the commands below.
-
-```sh
-telnet 192.168.42.1
-```
-
-Kill the Bebop's proprietary driver with
-```sh
-kk
-```
-and start the PX4 mainapp with:
-```sh
-/data/ftp/internal_000/px4/px4 -s /home/root/px4.config /data/ftp/internal_000/px4/
-```
-
-In order to fly the Bebop, connect a joystick device with your host machine and start QGroundControl.
-Both the Bebop and the joystick should be recognized.
-Follow the instructions to calibrate the sensors and setup your joystick device.
-
-#### Autostart
-
-To auto-start PX4 on the Bebop at boot, modify the init script `/etc/init.d/rcS_mode_default`.
-Comment the following line:
-```
-DragonStarter.sh -out2null &
-```
-Replace it with:
-```
-echo 1 > /sys/class/gpio/gpio85/value # enables the fan
-/data/ftp/internal_000/px4/px4 -d -s /home/root/px4.config /data/ftp/internal_000/px4/ >/dev/null &
-```
-
-Enable adb server by pressing the power button 4 times and connect to adb server as described before:
-```sh
-adb connect 192.168.42.1:9050
-```
-Re-mount the system partition as writeable:
-```sh
-adb shell mount -o remount,rw /
-```
-In order to avoid editing the file manually, you can use this one: https://gist.github.com/bartslinger/8908ff07381f6ea3b06c1049c62df44e
-
-Save the original one and push this one to the Bebop
-```sh
-adb shell cp /etc/init.d/rcS_mode_default /etc/init.d/rcS_mode_default_backup
-adb push rcS_mode_default /etc/init.d/
-adb shell chmod 755 /etc/init.d/rcS_mode_default
-```
-Sync and reboot:
-```sh
-adb shell sync
-adb shell reboot
-```
-
 ### OcPoC-Zynq Mini
 
-Build instructions for the [OcPoC-Zynq Mini](https://docs.px4.io/en/flight_controller/ocpoc_zynq.html) are covered in:
-* [Aerotenna OcPoC-Zynq Mini Flight Controller > Building PX4 for OcPoC-Zynq](https://docs.px4.io/en/flight_controller/ocpoc_zynq.html#building-px4-for-ocpoc-zynq) (PX4 User Guide)
+Build instructions for the [OcPoC-Zynq Mini](https://docs.px4.io/master/en/flight_controller/ocpoc_zynq.html) are covered in:
+* [Aerotenna OcPoC-Zynq Mini Flight Controller > Building PX4 for OcPoC-Zynq](https://docs.px4.io/master/en/flight_controller/ocpoc_zynq.html#building-px4-for-ocpoc-zynq) (PX4 User Guide)
 * [OcPoC PX4 Setup Page](https://aerotenna.readme.io/docs/px4-setup)
 
 
 ### QuRT / Snapdragon Based Boards
 
-This section shows how to build for the [Qualcomm Snapdragon Flight](https://docs.px4.io/en/flight_controller/snapdragon_flight.html).
+This section shows how to build for the [Qualcomm Snapdragon Flight](https://docs.px4.io/master/en/flight_controller/snapdragon_flight.html).
 
 #### Build
 
@@ -445,7 +328,7 @@ Qt creator offers clickable symbols, auto-completion of the complete codebase an
 
 ### Qt Creator on Linux
 
-Before starting Qt Creator, the [project file](https://cmake.org/Wiki/CMake_Generator_Specific_Information#Code::Blocks_Generator) needs to be created:
+Before starting Qt Creator, the [project file](https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/Generator-Specific-Information#codeblocks-generator) needs to be created:
 
 ```sh
 cd ~/src/Firmware
@@ -465,7 +348,7 @@ After loading, the **play** button can be configured to run the project by selec
 
 ### Qt Creator on Mac OS
 
-Before starting Qt Creator, the [project file](https://cmake.org/Wiki/CMake_Generator_Specific_Information#Code::Blocks_Generator) needs to be created:
+Before starting Qt Creator, the [project file](https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/Generator-Specific-Information#codeblocks-generator) needs to be created:
 
 ```sh
 cd ~/src/Firmware
@@ -486,12 +369,12 @@ This section shows how *make* options are constructed and how to find the availa
 
 The full syntax to call *make* with a particular configuration and initialization file is:
 ```sh
-make [VENDOR_][MODEL][_VARIANT] [VIEWER_MODEL_DEBUGGER]
+make [VENDOR_][MODEL][_VARIANT] [VIEWER_MODEL_DEBUGGER_WORLD]
 ```
 
 **VENDOR_MODEL_VARIANT**: (also known as `CONFIGURATION_TARGET`)
 
-- **VENDOR:** The manufacturer of the board: `px4`, `aerotenna`, `airmind`, `atlflight`, `auav`, `beaglebone`, `intel`, `nxp`, `parrot`, etc.
+- **VENDOR:** The manufacturer of the board: `px4`, `aerotenna`, `airmind`, `atlflight`, `auav`, `beaglebone`, `intel`, `nxp`, etc.
     The vendor name for Pixhawk series boards is `px4`.
 - **MODEL:** The *board model* "model": `sitl`, `fmu-v2`, `fmu-v3`, `fmu-v4`, `fmu-v5`, `navio2`, etc.
 - **VARIANT:** Indicates particular configurations: e.g. `rtps`, `lpe`, which contain components that are not present in the `default` configuration. Most commonly this is `default`, and may be omitted.
@@ -501,15 +384,18 @@ make [VENDOR_][MODEL][_VARIANT] [VIEWER_MODEL_DEBUGGER]
   make list_config_targets
   ```
 
-**VIEWER_MODEL_DEBUGGER:**
+**VIEWER_MODEL_DEBUGGER_WORLD:**
   
 - **VIEWER:** This is the simulator ("viewer") to launch and connect: `gazebo`, `jmavsim` <!-- , ?airsim -->
 - **MODEL:** The *vehicle* model to use (e.g. `iris` (*default*), `rover`, `tailsitter`, etc), which will be loaded by the simulator.
   The environment variable `PX4_SIM_MODEL` will be set to the selected model, which is then used in the [startup script](..\simulation\README.md#scripts) to select appropriate parameters. 
 - **DEBUGGER:** Debugger to use: `none` (*default*), `ide`, `gdb`, `lldb`, `ddd`, `valgrind`, `callgrind`. 
   For more information see [Simulation Debugging](../debug/simulation_debugging.md).
+- **WORLD:** (Gazebo only). Set a the world ([PX4/sitl_gazebo/worlds](https://github.com/PX4/sitl_gazebo/tree/master/worlds)) that is loaded.
+  Default is [empty.world](https://github.com/PX4/sitl_gazebo/blob/master/worlds/empty.world).
+  For more information see [Gazebo > Loading a Specific World](../simulation/gazebo.md#set_world).
 
-> **Tip** You can get a list of *all* available `VIEWER_MODEL_DEBUGGER` options using the command below:
+> **Tip** You can get a list of *all* available `VIEWER_MODEL_DEBUGGER_WORLD` options using the command below:
   ```sh
   make px4_sitl list_vmd_make_targets
   ```
@@ -538,7 +424,7 @@ When it is used, the toolchain downloads the latest successful master build of a
 > **Tip** This can help analyse changes that (may) cause `px4_fmu-v2_default` to hit the 1MB flash limit.
 
 *Bloaty* must be in your path and found at *cmake* configure time.
-The PX4 [docker files](https://github.com/PX4/containers/blob/master/docker/px4-dev/Dockerfile_nuttx) install *bloaty* as shown:
+The PX4 [docker files](https://github.com/PX4/containers/blob/master/docker/Dockerfile_nuttx-bionic) install *bloaty* as shown:
 ```
 git clone --recursive https://github.com/google/bloaty.git /tmp/bloaty \
 	&& cd /tmp/bloaty && cmake -GNinja . && ninja bloaty && cp bloaty /usr/local/bin/ \
@@ -640,3 +526,12 @@ You can do this in the macOS *Terminal* for each session:
   ```sh
   ulimit -S -n 300
   ```
+
+### macOS Catalina: Problem running cmake
+
+As of macOS Catalina 10.15.1 there may be problems when trying to build the simulator with *cmake*.
+If you have build problems on this platform then try run the following command in your terminal:
+```sh
+xcode-select --install
+sudo ln -s /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/* /usr/local/include/
+``` 

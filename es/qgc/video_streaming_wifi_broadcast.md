@@ -30,12 +30,12 @@ On TX (UAV) side:
 
 * [NanoPI NEO2](http://www.friendlyarm.com/index.php?route=product/product&product_id=180) (and/or Raspberry Pi if using Pi camera).
 * [Logitech camera C920](https://www.logitech.com/en-us/product/hd-pro-webcam-c920?crid=34) or [Raspberry Pi camera](https://www.raspberrypi.org/products/camera-module-v2/).
-* WiFi module [ALPHA AWUS036ACH](https://www.alfa.com.tw/WiFi%20USB%20Antenna.html).
+* WiFi module [ALPHA AWUS036ACH](https://www.alfa.com.tw/products_detail/1.htm).
 
 On RX (ground station side):
 
 * Any computer with Linux (tested on Fedora 25 x86-64).
-* WiFi module [ALPHA AWUS036ACH](https://www.alfa.com.tw/WiFi%20USB%20Antenna.html). See [wifibroadcast wiki > WiFi hardware](https://github.com/svpcom/wifibroadcast/wiki/WiFi-hardware) for more information on supported modules.
+* WiFi module [ALPHA AWUS036ACH](https://www.alfa.com.tw/products_detail/1.htm). See [wifibroadcast wiki > WiFi hardware](https://github.com/svpcom/wifibroadcast/wiki/WiFi-hardware) for more information on supported modules.
 
 If you don't need high-power cards, you can use any card with **rtl8812au** chipset.
 
@@ -123,7 +123,7 @@ Wifibroadcast puts the WiFi cards into monitor mode. This mode allows to send an
 - Slow CPU  
 - Only one USB bus  
 - 512MB SDRAM                                                                                                                                        |
-| [Odroid C0](http://www.hardkernel.com/main/products/prdt_info.php?g_code=G145326484280)  | - Fast CPU  
+| [Odroid C0](https://www.hardkernel.com/shop/odroid-c0/)                                  | - Fast CPU  
 - EMMC  
 - 1GB SDRAM                                                                                                                                                                | - Very sensitive to radio interference  
 - Doesn't supported by mainline kernel  

@@ -10,8 +10,8 @@
 
 * 안전 조종을 위해 Taranis Plus 원격 조종기 (또는 동급)
 * 개발 컴퓨터: 
-  * OSX 10.13 또는 그 이후 운영체제가 설치된 MacBook Pro (2015 초기 버전 이후)
-  * 우분투 16.04 또는 그 이후 운영체제가 설치된 Lenovo Thinkpad 450 (i5)
+  * MacBook Pro (early 2015 and later) with OSX 10.15 or later 
+  * Lenovo Thinkpad 450 (i5) with Ubuntu Linux 18.04 or later 
 * 지상통제소 장비: 
   * iPad(Wifi 텔레메트리 어댑터 필요)
   * 모든 MacBook 또는 Ubuntu Linux 랩톱(은 개발용 컴퓨터가 될 수 있음)
@@ -26,5 +26,5 @@
 비행기를 구성하려면:
 
 1. 개발 플랫폼을 위해 [QGroundControl 데일리 빌드](https://docs.qgroundcontrol.com/en/releases/daily_builds.html)를 다운로드 하십시오.
-2. [기본 구성](https://docs.px4.io/en/config/) (PX4 사용자 가이드)는 기본 구성 수행법을 설명합니다. 
-3. [매개변수 구성](https://docs.px4.io/en/advanced_config/parameters.html) (PX4 사용자 가이드)는 개별 매개변수를 찾고 수정하는 방법을 설명합니다.
+2. [Basic Configuration](https://docs.px4.io/master/en/config/) (PX4 User Guide) explains how to to perform basic configuration. 
+3. [Parameter Configuration](https://docs.px4.io/master/en/advanced_config/parameters.html) (PX4 User Guide) explains how you can find and modify individual parameters.

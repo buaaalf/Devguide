@@ -1,10 +1,10 @@
-# 用于 Pixhawk 系列的机载计算机
+# 机载计算机与Pixhawk系列的配合
 
 Pixhawk与配套计算机(Raspberry Pi，Odroid，Tegra K1) 的交互方式只有一种：通过串口2 `TELEM 2`。这个串口设计目的即是此。 消息格式是MAVLINK。
 
 ## Pixhawk 设置
 
-在 任何 [可配置的串口 ](https://docs.px4.io/en/peripherals/serial_configuration.html)上使能MAVLink消息。
+Enable MAVLink on any [configurable serial port](https://docs.px4.io/master/en/peripherals/serial_configuration.html).
 
 > **Tip** `TELEM 2` 一般用作与配套计算机通信。
 
@@ -14,7 +14,7 @@ Pixhawk与配套计算机(Raspberry Pi，Odroid，Tegra K1) 的交互方式只�
 * [MAV_1_MODE](../advanced/parameter_reference.md#MAV_1_MODE) = `Onboard`
 * [SER_TEL2_BAUD](../advanced/parameter_reference.md#SER_TEL2_BAUD) = `921600`（建议在像日志流或FastRTPS之类的应用，使用 921600 或更高）
 
-更多信息，请参考 [MAVLink Peripherals (GCS/OSD/Companion)](https://docs.px4.io/en/peripherals/mavlink_peripherals.html)。
+For more information see [MAVLink Peripherals (GCS/OSD/Companion)](https://docs.px4.io/master/en/peripherals/mavlink_peripherals.html).
 
 ## 机载计算机设置
 

@@ -16,7 +16,7 @@ Drivers should `#include <drivers/device/i2c.h>` and then provide an implementat
 
 驱动程序还需要在 [/src/drivers/](https://github.com/PX4/Firmware/tree/master/src/drivers) 中包括其设备类型（**drv_*.h**）的标头--例如 [drv_baro.h](https://github.com/PX4/Firmware/blob/master/src/drivers/drv_baro.h)。
 
-若要在固件中包含驱动程序，必须将驱动程序添加到与要为其生成的目标相对应的 [cmake 配置文件](https://github.com/PX4/Firmware/tree/master/cmake/configs)：
+To include a driver in firmware you must add the driver to the board-specific cmake file that corresponds to the target you want to build for:
 
     drivers/sf1xx
     
@@ -29,7 +29,7 @@ Drivers should `#include <drivers/device/i2c.h>` and then provide an implementat
 
 仅举几个例子：
 
-* [drivers/sf1xx](https://github.com/PX4/Firmware/tree/master/src/drivers/distance_sensor/sf1xx)-i2c 驱动程序，用于 [Lightware sf1xx lidar](https://docs.px4.io/en/sensor/sfxx_lidar.html)。
+* [drivers/sf1xx](https://github.com/PX4/Firmware/tree/master/src/drivers/distance_sensor/sf1xx) - I2C Driver for [Lightware SF1XX LIDAR](https://docs.px4.io/master/en/sensor/sfxx_lidar.html).
 * [drivers/ms5611](https://github.com/PX4/Firmware/tree/master/src/drivers/barometer/ms5611)-通过 I2C（或 SPI）连接的 MS5611 和 MS6507 气压传感器的 I2C 驱动程序。
 
 ## 更多信息

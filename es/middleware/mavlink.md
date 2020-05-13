@@ -52,7 +52,7 @@ public:
     {
         return "CA_TRAJECTORY";
     }
-    uint16_t get_id_static()
+    static uint16_t get_id_static()
     {
         return MAVLINK_MSG_ID_CA_TRAJECTORY;
     }
@@ -114,7 +114,7 @@ nullptr
 };
 ```
 
-Then make sure to enable the stream, for example by adding the following line to the startup script (`-r` configures the streaming rate, `-u` identifies the MAVLink channel on UDP port 14556):
+Then make sure to enable the stream, for example by adding the following line to the [startup script](../concept/system_startup.md) (e.g. [/ROMFS/px4fmu_common/init.d-posix/rcS](https://github.com/PX4/Firmware/blob/master/ROMFS/px4fmu_common/init.d-posix/rcS) on NuttX or [ROMFS/px4fmu_common/init.d-posix/rcS](https://github.com/PX4/Firmware/blob/master/ROMFS/px4fmu_common/init.d-posix/rcS)) on SITL. Note that `-r` configures the streaming rate and `-u` identifies the MAVLink channel on UDP port 14556).
 
     mavlink stream -r 50 -s CA_TRAJECTORY -u 14556
     

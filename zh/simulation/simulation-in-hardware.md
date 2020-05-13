@@ -1,10 +1,10 @@
-# Simulation-In-Hardware (SIH)
+# 硬件仿真
 
-Simulation-In-Hardware (SIH) is an alternative to [Hardware In The Loop (HIL) simulation](../simulation/hitl.md) for a quadrotor. In this setup, everything is running on embedded hardware - the controller, the state estimator, and the simulator. The Desktop computer is only used to display the virtual vehicle.
+对于四旋翼，硬件仿真（SIH）是[硬件在环仿真（HITL）](../simulation/hitl.md)的替代品。 在这个设置中，所有的数据处理工作都在嵌入式硬件（PIXHAWK）中完成，包括控制器、状态估计器和仿真器。 与PIXHAWK连接的电脑只用来显示虚拟的载具。
 
-![Simulator MAVLink API](../../assets/diagrams/SIH_diagram.png)
+![仿真器 MAVLink API](../../assets/diagrams/SIH_diagram.png)
 
-The SIH provides two benefits over the HITL:
+与硬件在环仿真相比，硬件仿真有以下两点好处：
 
 - It ensures synchronous timing by avoiding the bidirectional connection to the computer. As a result the user does not need such a powerful desktop computer.
 
@@ -18,21 +18,33 @@ Furthermore, the physical parameters representing the vehicle (such as mass, ine
 
 ## Requirements
 
-To run the SIH, you will need a [flight controller hardware](https://docs.px4.io/en/flight_controller/) (e.g. a Pixhawk-series board). If you are planning to use a [radio control transmitter and receiver pair](https://docs.px4.io/en/getting_started/rc_transmitter_receiver.html) you should have that too. Alternatively, using *QGroundControl*, a [joystick](https://docs.qgroundcontrol.com/en/SetupView/Joystick.html) can be used to emulate a radio control system.
+To run the SIH, you will need a [flight controller hardware](https://docs.px4.io/master/en/flight_controller/) (e.g. a Pixhawk-series board). If you are planning to use a [radio control transmitter and receiver pair](https://docs.px4.io/master/en/getting_started/rc_transmitter_receiver.html) you should have that too. 或者，使用*QGC地面站*、[操纵杆](https://docs.qgroundcontrol.com/en/SetupView/Joystick.html)也能被用来仿真一个无线电控制系统。
 
-The SIH is compatible with all Pixhawk-series boards except those based on FMUv2. It is available on the firmware master branch and release versions v1.9.0 and above.
+硬件仿真可以在除了FMUv2硬件之外的所有Pixhawk飞控板上使用。 它可以在固件主分支和发布版本v1.9.0及以上版本中使用。
 
-## Setting up SIH
+## 配置硬件仿真（SIH）
 
-Running the SIH is as easy as selecting an airframe. Plug the autopilot to the desktop computer with a USB cable, let it boot, then using a ground control station select the [SIH airframe](../airframes/airframe_reference.md#simulation-copter). The autopilot will then reboot.
+运行SIH和挑选一个机架一样简单。 将飞控和电脑用USB线连接起来，让它通电启动，然后使用地面站选择[SIH 机架](../airframes/airframe_reference.md#simulation-copter) 飞控接下来会重启
 
-When the SIH airframe is selected, the SIH module starts by itself, the vehicle should be displayed on the ground control station map.
+当选择了SIH 机架之后，SIH模块就自动启动了，车辆应该显示在地面站的地图上
 
-## Setting up the Display
+## 设置显示
 
-The simulated quadrotor can be displayed in jMAVSim (coming soon).
+The simulated quadrotor can be displayed in jMAVSim from PX4 v1.11.
 
-## Credits
+1. Close *QGroundControl* (if opened).
+2. Unplug and replug the hardware autopilot (allow a few seconds for it to boot).
+3. Start jMAVSim by calling the script **jmavsim_run.sh** from a terminal: ```./Tools/jmavsim_run.sh -q -d /dev/ttyACM0 -b 921600 -r 250 -o``` where the flags are 
+    - `-q` to allow the communication to *QGroundControl* (optional).
+    - `-d` to start the serial device `/dev/ttyACM0` on Linux. On macOS this would be `/dev/tty.usbmodem1`.
+    - `-b` to set the serial baud rate to `921600`.
+    - `-r` to set the refresh rate to `250` Hz (optional).
+    - `-o` to start jMAVSim in *display Only* mode (i.e. the physical engine is turned off and jMAVSim only displays the trajectory given by the SIH in real-time).
+4. After few seconds, *QGroundControl* can be opened again.
+
+At this point, the system can be armed and flown. The vehicle can be observed moving in jMAVSim, and on the QGC **Fly** view.
+
+## 鸣谢
 
 The SIH was developed by Coriolis g Corporation, a Canadian company developing a new type of Vertical Takeoff and Landing (VTOL) Unmanned Aerial Vehicles (UAV) based on passive coupling systems.
 

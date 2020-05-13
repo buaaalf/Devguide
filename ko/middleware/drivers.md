@@ -1,12 +1,8 @@
-# Driver Development
+# 드라이버 개발
 
-NuttX device drivers are based on the [Device](https://github.com/PX4/Firmware/tree/master/src/lib/drivers/device) framework.
+PX4 device drivers are based on the [Device](https://github.com/PX4/Firmware/tree/master/src/lib/drivers/device) framework.
 
-Linux and QuRT drivers are based on [DriverFramework](https://github.com/px4/DriverFramework). PX4 is currently being updated so that they can use the same drivers as NuttX.
-
-> **Note** Currently (December 2017) a small number of Linux/QuRT I2C drivers have been migrated (primarily for airspeed sensors). We plan to migrate the remaining drivers in coming releases.
-
-## Creating a Driver
+## 드라이버 만들기
 
 PX4 almost exclusively consumes data from [uORB](../middleware/uorb.md). Drivers for common peripheral types must publish the correct uORB messages (for example: gyro, accelerometer, pressure sensors, etc.).
 
@@ -18,20 +14,20 @@ The best approach for creating a new driver is to start with a similar driver as
 
 > **Note** Publishing the correct uORB topics is the only pattern that drivers *must* follow.
 
-## Core Architecture
+## 중요 아키텍쳐
 
 PX4 is a [reactive system](../concept/architecture.md) and uses [uORB](../middleware/uorb.md) publish/subscribe to transport messages. File handles are not required or used for the core operation of the system. Two main APIs are used:
 
-* The publish / subscribe system which has a file, network or shared memory backend depending on the system PX4 runs on.
-* The global device registry, which can be used to enumerate devices and get/set their configuration. This can be as simple as a linked list or map to the file system.
+* Pub/Sub 시스템은 PX4가 실행되는 시스템에 의존하는 네트워크나 공유메모리 백엔드가 있습니다.
+* 글로벌 장치 레지스트리를 통해 디바이스 목록과 그 설정을 get/set할 수 있습니다. 이것은 링크리스트처럼 간단하며, 파일시스템에 매핑할 수도 있습니다.
 
-## Device IDs
+## 디바이스 ID
 
 PX4 uses device IDs to identify individual sensors consistently across the system. These IDs are stored in the configuration parameters and used to match sensor calibration values, as well as to determine which sensor is logged to which logfile entry.
 
 The order of sensors (e.g. if there is a `/dev/mag0` and an alternate `/dev/mag1`) does not determine priority - the priority is instead stored as part of the published uORB topic.
 
-### Decoding example
+### 디코딩 예제
 
 For the example of three magnetometers on a system, use the flight log (.px4log) to dump the parameters. The three parameters encode the sensor IDs and `MAG_PRIME` identifies which magnetometer is selected as the primary sensor. Each MAGx_ID is a 24bit number and should be padded left with zeros for manual decoding.
 
@@ -68,7 +64,7 @@ And this is the internal MPU9250 magnetometer connected via SPI, bus 1, slave se
     MPU9250   dev 4   bus 1 SPI
     
 
-### Device ID Encoding
+### 디바이스 ID 인코딩
 
 The device ID is a 24bit number according to this format. Note that the first fields are the least significant bits in the decoding example above.
 
@@ -112,3 +108,33 @@ and `devtype` is decoded according to:
 #define DRV_RNG_DEVTYPE_MB12XX   0x31
 #define DRV_RNG_DEVTYPE_LL40LS   0x32
 ```
+
+## Debugging
+
+For general debugging topics see: [Debugging/Logging](../debug/README.md).
+
+### Verbose Logging
+
+Drivers (and other modules) output minimally verbose logs strings by default (e.g. for `PX4_DEBUG`, `PX4_WARN`, `PX4_ERR`, etc.).
+
+Log verbosity is defined at build time using the `RELEASE_BUILD` (default), `DEBUG_BUILD` (verbose) or `TRACE_BUILD` (extremely verbose) macros.
+
+Change the logging level using `COMPILE_FLAGS` in the driver `px4_add_module` function (**CMakeLists.txt**). The code fragment below shows the required change to enable DEBUG_BUILD level debugging for a single module or driver.
+
+    px4_add_module(
+        MODULE templates__module
+        MAIN module
+    
+
+        COMPILE_FLAGS
+            -DDEBUG_BUILD
+    
+
+        SRCS
+            module.cpp
+        DEPENDS
+            modules__uORB
+        )
+    
+
+> **Tip** Verbose logging can also be enabled on a per-file basis, by adding `#define DEBUG_BUILD` at the very top of a .cpp file (before any includes).

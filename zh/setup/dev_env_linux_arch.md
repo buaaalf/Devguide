@@ -1,75 +1,27 @@
-# ArchLinux 上的开发环境
+# Arch Linux 上开发环境的搭建
 
-> **Note** These instructions allow you to build PX4 (without RTPS) for NuttX targets, using an unsupported version of GCCE from the package manager. The instructions have been tested on Antergos (an Arch Linux based distribution) as it is easier to set up than Arch Linux. 我们希望在不久的将来为本工具链提供经过全面测试的安装指南。（PS：译者实测时发现 ：Epel 源链接错误、部分依赖项无法使用 easy_install 的方式安装，只能使用 pip、系统自带 cmake 版本过低需要手动升级等问题，然后就弃坑了，欢迎 CentOS 大神折腾一下）
+固件仓库里已经提供了一个脚本 [Tools/setup/arch.sh](https://github.com/PX4/Firmware/blob/{{ book.px4_version }}/Tools/setup/arch.sh) 方便你快速地在你的平台上搭建 PX4 的开发环境。
 
-## 权限
+该脚本默认安装所有必需的工具，用于编译基于NuttX的PX4源码（不带RTPS），以及运行基于 *jMAVsim* 的仿真器。 你也可以安装额外的*Gazebo*仿真器通过在命令行中指定一个参数： `--gazebo`。
 
-将当前用户加入用户组 “uucp” ：
+![Arch上使用Gazebo](../../assets/simulation/gazebo/arch-gazebo.png)
 
-```sh
-sudo usermod -a -G uucp $USER
-```
+> **Note** 所有的指令已经在[Manjaro](https://manjaro.org/)（Arch的衍生）上做过测试，因为他比在Arch Linux上更容易搭建。
 
-然后注销并重新登录以使上述改动生效。
+要获取并运行这个脚本，有下面几种办法：
 
-## 基于脚本的安装
+- [下载PX4的源码，](../setup/building_px4.md) 然后运行这个目录下的脚本： 
+        git clone https://github.com/PX4/Firmware.git
+        bash Firmware/Tools/setup/arch.sh
 
-> **Note** This script installs the (unsupported) latest GCCE from the package manager. MicroRTPS is not built.
+- 只下载你所需的脚本并运行他们： 
+        sh
+        wget https://raw.githubusercontent.com/PX4/Firmware/master/Tools/setup/arch.sh
+        wget https://raw.githubusercontent.com/PX4/Firmware/master/Tools/setup/requirements.txt
+        bash arch.sh
 
-Once ArchLinux is installed you can use the docker script [archlinux_install_script.sh](https://github.com/PX4/containers/blob/master/docker/px4-dev/scripts/archlinux_install_script.sh) to install all dependencies required for building PX4 firmware.
+该脚本可以加入这些可选的参数：
 
-To install using this script, enter the following in a terminal:
-
-```sh
-wget https://raw.githubusercontent.com/PX4/containers/master/docker/px4-dev/scripts/archlinux_install_script.sh
-sudo -s
-source ./archlinux_install_script.sh
-```
-
-<!-- 
-> Follow the instructions [below](#gcc-toolchain-installation) to install the supported version.
--->
-
-## 手动安装
-
-### 通用依赖
-
-在终端输入以下命令进行依赖项的手动安装：
-
-```sh
-# 所有目标的通用依赖包
-sudo pacman -Sy --noconfirm \
-    base-devel make cmake ccache git \
-    ninja python-pip tar unzip zip vim wget
-
-# 安装 Python 依赖包
-pip install serial empy numpy toml jinja2 pyyaml cerberus
-
-# 安装 genromfs
-wget https://sourceforge.net/projects/romfs/files/genromfs/0.5.2/genromfs-0.5.2.tar.gz
-tar zxvf genromfs-0.5.2.tar.gz
-cd genromfs-0.5.2 && make && make install && cd ..
-rm genromfs-0.5.2.tar.gz genromfs-0.5.2 -r 
-```
-
-> **Note** *genromfs* is also available in the [Archlinux User Repository](https://aur.archlinux.org/packages/genromfs/) (AUR). To use this package, install [yaourt](https://archlinux.fr/yaourt-en) (Yet AnOther User Repository Tool) and then use it to download, compile and install *genromfs* as shown: 
-> 
->     sh
->       yaourt -S genromfs
-
-### GCCE 编译器
-
-A GCC compiler is required to build for NuttX targets. Enter the command below to install the latest version from the package manager (unsupported).
-
-    # 从包管理器安装编译器（不支持）
-    sudo pacman -Sy --noconfirm \
-        arm-none-eabi-gcc arm-none-eabi-newlib
-    
-
-*Alternatively*, the standard instructions for installing the **official** version are listed below.
-
-> **Note** These are untested. Attempt them at your own risk!
-
-<!-- import GCC toolchain common documentation -->
-
-{% include "_gcc_toolchain_installation.md" %}
+- `--gazebo`：添加此参数从 [AUR](https://aur.archlinux.org/packages/gazebo/) 安装 Gazebo 仿真器。 > **Note** Gazebo 是通过获取源码后编译得到的， 这个过程需要花费一些时间并且需要添加 `sudo` 并多次输入密码（对于依赖项）。
+- `--no-nuttx`: 不要安装 NuttX/Pixhawk 的工具链 (比如你只想使用仿真器的功能)。
+- `--no-sim-tools`：不要安装 jMAVSim/Gazebo 仿真器（例如你只想使用或者开发调试 Pixhawk/NuttX）

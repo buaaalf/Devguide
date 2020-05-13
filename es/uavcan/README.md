@@ -1,6 +1,6 @@
 # UAVCAN Introduction
 
-![](../../assets/uavcan-logo-transparent.png)
+![UAVCAN Logo](../../assets/uavcan-logo-transparent.png)
 
 [UAVCAN](http://uavcan.org) is an onboard network which allows the autopilot to connect to avionics. It supports hardware like:
 
@@ -14,9 +14,14 @@
   
   * [Thiemar airspeed sensor](https://github.com/thiemar/airspeed)
 * GNSS receivers for GPS and GLONASS 
-  * [Zubax GNSS](http://zubax.com/product/zubax-gnss)
+  * [Zubax GNSS](https://zubax.com/products/gnss_2)
+* Power monitors 
+  * [Pomegranate Systems Power Module](http://docs.px4.io/master/en/power_module/pomegranate_systems_pm.html)
+  * [CUAV CAN PMU Power Module](http://docs.px4.io/master/en/power_module/cuav_can_pmu.html)
 
 In contrast to hobby-grade devices it uses rugged, differential signalling and supports firmware upgrades over the bus. All motor controllers provide status feedback and implement field-oriented-control \(FOC\).
+
+> **Note** PX4 requires an SD card for UAVCAN node allocation and firmware upgrade. It is not used during flight by UAVCAN.
 
 ## Initial Setup
 
@@ -26,7 +31,7 @@ The following instructions provide a step-by-step guide to connect and setup a q
 
 The first step is to connect all UAVCAN enabled devices with the flight controller. The following diagram displays how to wire all components. The used Zubax devices all support a redundant CAN interface in which the second bus is optional but increases the robustness of the connection.
 
-![](../../assets/UAVCAN_wiring.png)
+![UAVCAN Wiring](../../assets/UAVCAN_wiring.png)
 
 It is important to mention that some devices require an external power supply \(e.g. Zubax Orel 20\) and others can be powered by the CAN connection \(e.g Zubax GNSS\) itself. Please refer to the documentation of your hardware before continuing with the setup.
 
@@ -47,5 +52,5 @@ The ID and rotational direction of each motor controller can be assigned after i
 ## Useful links
 
 * [Homepage](http://uavcan.org)
-* [Specification](http://uavcan.org/Specification)
+* [Specification](https://uavcan.org/specification/)
 * [Implementations and tutorials](http://uavcan.org/Implementations)

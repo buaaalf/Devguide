@@ -118,9 +118,6 @@ FrSky 数传支持， 会自动检测使用 D.PORT 还是 S.PORT 协议。
          [-b <val>]  Baudrate (can also be p:<param_name>)
                      default: 460800
          [-p <val>]  Poll timeout for UART in ms
-         [-u <val>]  Interval in ms to limit the update rate of all sent topics
-                     (0=unlimited)
-                     default: 0
          [-l <val>]  Limit number of iterations until the program exits
                      (-1=infinite)
                      default: 10000
@@ -130,6 +127,8 @@ FrSky 数传支持， 会自动检测使用 D.PORT 还是 S.PORT 协议。
                      default: 2019
          [-s <val>]  Select UDP Network Port for sending (remote)
                      default: 2020
+         [-i <val>]  Select IP address (remote)
+                     values: <x.x.x.x>, default: 127.0.0.1
     
        stop
     
@@ -174,6 +173,7 @@ uORB 模块通常作为第一个模块启动，并且绝大多数其它模块均
        status        Print topic statistics
     
        top           Monitor topic publication rates
-         [-a]        print all instead of only currently publishing topics
+         [-a]        print all instead of only currently publishing topics with
+                     subscribers
          [-1]        run only once, then exit
          [<filter1> [<filter2>]] topic(s) to match (implies -a)

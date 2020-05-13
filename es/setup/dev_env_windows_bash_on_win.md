@@ -4,23 +4,24 @@
 
 Los usuarios de Windows también pueden instalar un entorno de desarrollo PX4 Ubuntu Linux *ligeramente modificados* en [Bash on Windows](https://github.com/Microsoft/BashOnWindows) y utilizarlo para:
 
-* Compilar el firmware para objetivos NuttX/Pixhawk. 
+* Compilar el firmware para objetivos NuttX/Pixhawk.
 * Ejecutar la simulación PX4 JMAVSim (usando una aplicación alojada en Windows X-Windows para mostrar la interfaz de usuario)
 
 > **Nota** Este mecanismo sólo funciona en Windows 10. Esencialmente funciona el toolchain en una máquina virtual y es relativamente lento en comparación con otras soluciones.
 
 ### Configura el entorno
 
-La forma más fácil de configurar el entorno es utilizar el script **<a href="https://raw.githubusercontent.com/PX4/Devguide/master/build_scripts/windows_bash_nuttx.sh" target="_blank" download>windows_bash_nuttx.sh</a>** (los detalles del script están [más abajo](#build_script_details)).
+The easiest way to setup the environment is to use the **<a href="https://raw.githubusercontent.com/PX4/Devguide/{{ book.px4_version }}/build_scripts/windows_bash_nuttx.sh" target="_blank" download>windows_bash_nuttx.sh</a>** script (details for script are [given below](#build_script_details)).
 
 Para configurar el entorno de desarrollo:
 
 1. Instala [Bash on Windows](https://github.com/Microsoft/BashOnWindows).
-2. Abre el shell de bash. 
-3. Descarga el **windows_bash_nuttx.sh**: ```wget https://raw.githubusercontent.com/PX4/Devguide/master/build_scripts/windows_bash_nuttx.sh```
+2. Abre el shell de bash.
+3. Download the **windows_bash_nuttx.sh**:  
+    `wget https://raw.githubusercontent.com/PX4/Devguide/{{ book.px4_version }}/build_scripts/windows_bash_nuttx.sh`
 4. Ejecuta el script usando el siguiente comando (reconociendo cualquier mensaje que sea necesario): 
         sh
-        source windows_bash_nuttx.sh
+        bash windows_bash_nuttx.sh
 
 ### Compila el Firmware
 
@@ -34,7 +35,7 @@ Para compilar el firmware (por ejemplo para px4_fmu-v4):
     
     Una vez se haya completado encontrarás el firmware aquí: `Firmware/build/px4_fmu-v4_default/px4_fmu-v4_default.px4`
     
-    > **Nota** Los comandos `make` para compilar el firmware para otras plataformas se encuentra en [Compilando el código](../setup/building_px4.md#nuttx--pixhawk-based-boards)
+    > **Note** The `make` commands to build firmware for other boards can be found in [Building the Code](../setup/building_px4.md#nuttx)
 
 2. Puedes flashear el firmware custom en Windows usando *QGroundControl* o *Mission Planner* (no es posible flashear directamente desde el shell bash usando el comando `upload`).
 
@@ -69,9 +70,9 @@ Para ejecutar JMAVSim:
 
 ### Detalles de script de compilación {#build_script_details}
 
-El script de compilación [windows_bash_nuttx.sh](https://raw.githubusercontent.com/PX4/Devguide/master/build_scripts/windows_bash_nuttx.sh) modifica las instrucciones de compilación de Ubuntu para eliminar los componentes específicos de Ubuntu y dependientes de interfaz de usuario, incluyendo el IDE *Qt Creator* y los simuladores.
+The [windows_bash_nuttx.sh](https://raw.githubusercontent.com/PX4/Devguide/{{ book.px4_version }}/build_scripts/windows_bash_nuttx.sh) build script modifies the Ubuntu build instructions to remove Ubuntu-specific and UI-dependent components, including the *Qt Creator* IDE and the simulators.
 
-Además, usa un [compilador de 64 bit arm-none-eabi](https://github.com/SolinGuo/arm-none-eabi-bash-on-win10-.git) desde que BashOnWindows no funciona en programas ELF de 32 bit (y el compilador por defecto de `https://launchpad.net/gcc-arm-embedded` es de 32 bit).
+In addition, it uses a [64 bit arm-none-eabi compiler](https://github.com/SolinGuo/arm-none-eabi-bash-on-win10-.git) since BashOnWindows doesn't run 32 bit ELF programs (and the default compiler from `https://launchpad.net/gcc-arm-embedded` is 32 bit).
 
 Para agregar este compilador a tu entorno manualmente:
 
@@ -83,4 +84,4 @@ Para agregar este compilador a tu entorno manualmente:
         sh
         tar -xvf gcc-arm-none-eabi-5_4-2017q2-20170512-linux.tar.bz2 Esto descomprimirá el gcc cross-compiler en: ```gcc-arm-none-eabi-5_4-2017q2/bin```
 
-3. Agrégalo al entorno (agrega la linea a tu bash profile para hacer el cambio permanente) ```export PATH=$HOME/gcc-arm-none-eabi-5_4-2017q2/bin:\$PATH```
+3. Agrégalo al entorno (agrega la linea a tu bash profile para hacer el cambio permanente) ```export PATH=$HOME/gcc-arm-none-eabi-5_4-2017q2/bin:$PATH```

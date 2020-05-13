@@ -16,7 +16,7 @@ Drivers should `#include <drivers/device/i2c.h>` and then provide an implementat
 
 Drivers will also need to include headers for their type of device (**drv_*.h**) in [/src/drivers/](https://github.com/PX4/Firmware/tree/master/src/drivers) - e.g. [drv_baro.h](https://github.com/PX4/Firmware/blob/master/src/drivers/drv_baro.h).
 
-To include a driver in firmware you must add the driver to the [cmake config file](https://github.com/PX4/Firmware/tree/master/cmake/configs) that corresponds to the target you want to build for:
+To include a driver in firmware you must add the driver to the board-specific cmake file that corresponds to the target you want to build for:
 
     drivers/sf1xx
     
@@ -29,7 +29,7 @@ To find I2C driver examples, search for **i2c.h** in [/src/drivers/](https://git
 
 Just a few examples are:
 
-* [drivers/sf1xx](https://github.com/PX4/Firmware/tree/master/src/drivers/distance_sensor/sf1xx) - I2C Driver for [Lightware SF1XX LIDAR](https://docs.px4.io/en/sensor/sfxx_lidar.html).
+* [drivers/sf1xx](https://github.com/PX4/Firmware/tree/master/src/drivers/distance_sensor/sf1xx) - I2C Driver for [Lightware SF1XX LIDAR](https://docs.px4.io/master/en/sensor/sfxx_lidar.html).
 * [drivers/ms5611](https://github.com/PX4/Firmware/tree/master/src/drivers/barometer/ms5611) - I2C Driver for the MS5611 and MS6507 barometric pressure sensor connected via I2C (or SPI).
 
 ## Further Information

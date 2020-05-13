@@ -116,12 +116,12 @@ Make sure not to mix `orb_advertise_multi` and `orb_advertise` for the same topi
 
 The full API is documented in [src/modules/uORB/uORBManager.hpp](https://github.com/PX4/Firmware/blob/master/src/modules/uORB/uORBManager.hpp).
 
-## Troubleshooting and common Pitfalls
+## Message/Field Deprecation {#deprecation}
 
-The following explains some common pitfalls and corner cases:
+As there are external tools using uORB messages from log files, such as [Flight Review](https://github.com/PX4/flight_review), certain aspects need to be considered when updating existing messages:
 
-- The topic is not published: make sure the `ORB_ID()`'s of each call match. It is also important that `orb_subscribe` and `orb_unsubscribe` are **called from the same task** as `orb_check` and `orb_copy`. This applies to `px4_task_spawn_cmd()`, but also when using work queues (`work_queue()`).
-- Make sure to clean up: use `orb_unsubscribe` and `orb_unadvertise`.
-- A successful `orb_check()` or `px4_poll()` call requires an `orb_copy()`, otherwise the next poll will return immediately.
-- It is perfectly ok to call `orb_subscribe` before anyone advertised the topic.
-- `orb_check()` and `px4_poll()` will only return true for publications that are done after `orb_subscribe()`. This is important for topics that are not published regularly. If a subscriber needs the previous data, it should just do an unconditional `orb_copy()` right after `orb_subscribe()` (note that `orb_copy()` will fail if there is no advertiser yet).
+- Changing existing fields or messages that external tools rely on is generally acceptable if there are good reasons for the update. In particular for breaking changes to *Flight Review*, *Flight Review* must be updated before code is merged to `master`.
+- In order for external tools to reliably distinguish between two message versions, the following steps must be followed: 
+  - Removed or renamed messages must be added to the `deprecated_msgs` list in [msg/CMakeLists.txt](https://github.com/PX4/Firmware/blob/master/msg/CMakeLists.txt#L157) and the **.msg** file needs to be deleted.
+  - Removed or renamed fields must be commented and marked as deprecated. For example `uint8 quat_reset_counter` would become `# DEPRECATED: uint8 quat_reset_counter`. This is to ensure that removed fields (or messages) are not re-added in future.
+  - In case of a semantic change (e.g. the unit changes from degrees to radians), the field must be renamed as well and the previous one marked as deprecated as above.

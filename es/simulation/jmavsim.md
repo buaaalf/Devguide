@@ -8,13 +8,23 @@ jMAVSim is a simple multirotor/Quad simulator that allows you to fly *copter* ty
 
 This topic shows how to set up jMAVSim to connect with a SITL version of PX4.
 
-> **Tip** jMAVSim can also be used for HITL Simulation ([as shown here](../simulation/hitl.md#jmavsimgazebo-hitl-environment).
+> **Tip** jMAVSim can also be used for HITL Simulation ([as shown here](../simulation/hitl.md#jmavsim_hitl_configuration)).
+
+## Installation
+
+jMAVSim setup is included in our [standard build instructions](../setup/dev_env.md) (for macOS, Ubuntu Linux, Windows).
 
 ## Simulation Environment
 
 Software in the Loop Simulation runs the complete system on the host machine and simulates the autopilot. It connects via local network to the simulator. The setup looks like this:
 
-{% mermaid %} graph LR; Simulator-->MAVLink; MAVLink-->SITL; {% endmermaid %}
+[![Mermaid graph: SITL Simulator](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggTFI7XG4gIFNpbXVsYXRvci0tPk1BVkxpbms7XG4gIE1BVkxpbmstLT5TSVRMOyIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggTFI7XG4gIFNpbXVsYXRvci0tPk1BVkxpbms7XG4gIE1BVkxpbmstLT5TSVRMOyIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
+
+<!-- original graph
+graph LR;
+  Simulator-- >MAVLink;
+  MAVLink-- >SITL;
+-->
 
 ## Running SITL
 
@@ -30,7 +40,7 @@ This will bring up the PX4 shell:
 [init] shell id: 140735313310464
 [init] task name: px4
 
-______  __   __    ___ 
+______  __   __    ___
 | ___ \ \ \ / /   /   |
 | |_/ /  \ V /   / /| |
 |  __/   /   \  / /_| |
@@ -107,6 +117,14 @@ You can start JMAVSim and PX4 separately:
 
 This allows a faster testing cycle (restarting jMAVSim takes significantly more time).
 
+### Headless Mode
+
+To start jMAVSim without the GUI, set the env variable `HEADLESS=1` as shown:
+
+```bash
+HEADLESS=1 make px4_sitl jmavsim
+```
+
 ## Multi-Vehicle Simulation
 
 JMAVSim can be used for multi-vehicle simulation: [Multi-Vehicle Sim with JMAVSim](../simulation/multi_vehicle_jmavsim.md).
@@ -123,5 +141,104 @@ The simulation can be [interfaced to ROS](../simulation/ros_interface.md) the sa
 
 ## Important Files
 
-* The startup script is in the [posix-configs/SITL/init](https://github.com/PX4/Firmware/tree/master/posix-configs/SITL/init) folder and named `rcS_SIM_AIRFRAME`, the default is `rcS_jmavsim_iris`.
+* The startup scripts are discussed in [System Startup](../concept/system_startup.md).
 * The simulated root file system ("`/`" directory) is created inside the build directory here: `build/px4_sitl_default/tmp/rootfs`.
+
+## Troubleshooting
+
+### java.long.NoClassDefFoundError
+
+If you see an error similar to the one below, it's likely that you're using a Java version later than 8:
+
+    Exception in thread "main" java.lang.NoClassDefFoundError: javax/vecmath/Tuple3d
+    at java.base/java.lang.Class.forName0(Native Method)
+    at java.base/java.lang.Class.forName(Class.java:374)
+    at org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader.main(JarRsrcLoader.java:56)
+    Caused by: java.lang.ClassNotFoundException: javax.vecmath.Tuple3d
+    at java.base/java.net.URLClassLoader.findClass(URLClassLoader.java:466)
+    at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:566)
+    at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:499)
+    ... 3 more
+    Exception in thread "main" java.lang.NoClassDefFoundError: javax/vecmath/Tuple3d
+    at java.base/java.lang.Class.forName0(Native Method)
+    at java.base/java.lang.Class.forName(Class.java:374)
+    at org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader.main(JarRsrcLoader.java:56)
+    Caused by: java.lang.ClassNotFoundException: javax.vecmath.Tuple3d
+    at java.base/java.net.URLClassLoader.findClass(URLClassLoader.java:466)
+    at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:566)
+    at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:499)
+    
+
+For more info check [this GitHub issue](https://github.com/PX4/Firmware/issues/9557).
+
+The solution is to install the Java 8, as shown in the following sections.
+
+#### Ubuntu:
+
+    sudo apt install openjdk-8-jdk
+    sudo update-alternatives --config java # choose 8
+    rm -rf Tools/jMAVSim/out
+    
+
+#### macOS
+
+We recommend to install OpenJDK 8 from [AdoptOpenJDK](https://adoptopenjdk.net/) using brew:
+
+    brew tap adoptopenjdk/openjdk
+    brew cask install adoptopenjdk8
+    brew install ant
+    export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+    rm -rf Tools/jMAVSim/out
+    
+
+Alternatively you could [download Oracle Java 8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and install it manually.
+
+### An illegal reflective access operation has occured
+
+If you see an error similar to the one below, it's likely that you're using a Java version later than 8:
+
+    WARNING: An illegal reflective access operation has occurred
+    WARNING: Illegal reflective access by javax.media.j3d.JoglPipeline (rsrc:j3dcore.jar) to method sun.awt.AppContext.getAppContext()
+    WARNING: Please consider reporting this to the maintainers of javax.media.j3d.JoglPipeline
+    WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+    WARNING: All illegal access operations will be denied in a future release
+    Inconsistency detected by ld.so: dl-lookup.c: 112: check_match: Assertion version->filename == NULL || ! _dl_name_match_p (version->filename, map)' failed!
+    
+
+Follow the steps above to make sure Java 8 is installed and selected.
+
+### java.awt.AWTError: Assistive Technology not found: org.GNOME.Accessibility.AtkWrapper
+
+    Exception in thread "main" java.lang.reflect.InvocationTargetException
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:498)
+    at org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader.main(JarRsrcLoader.java:58)
+    Caused by: java.awt.AWTError: Assistive Technology not found: org.GNOME.Accessibility.AtkWrapper
+    at java.awt.Toolkit.loadAssistiveTechnologies(Toolkit.java:807)
+    at java.awt.Toolkit.getDefaultToolkit(Toolkit.java:886)
+    at java.awt.Window.getToolkit(Window.java:1358)
+    at java.awt.Window.init(Window.java:506)
+    at java.awt.Window.(Window.java:537)
+    at java.awt.Frame.(Frame.java:420)
+    at java.awt.Frame.(Frame.java:385)
+    at javax.swing.JFrame.(JFrame.java:189)
+    at me.drton.jmavsim.Visualizer3D.(Visualizer3D.java:104)
+    at me.drton.jmavsim.Simulator.(Simulator.java:157)
+    at me.drton.jmavsim.Simulator.main(Simulator.java:678)
+    
+
+If you see this error, try this workaround:
+
+Edit the **accessibility.properties** file:
+
+    sudo gedit /etc/java-8-openjdk/accessibility.properties
+    
+
+and comment out the line indicated below:
+
+    #assistive_technologies=org.GNOME.Acessibility.AtkWrapper
+    
+
+For more info check [this GitHub issue](https://github.com/PX4/Firmware/issues/9557). The fix was found in [askubuntu.com](https://askubuntu.com/questions/695560).

@@ -1,10 +1,14 @@
 # Simulate Failsafes
 
-[Failsafes](https://docs.px4.io/en/config/safety.html) define the safe limits/conditions under which you can safely use PX4, and the action that will be performed if a failsafe is triggered (for example, landing, holding position, or returning to a specified point).
+[Failsafes](https://docs.px4.io/master/en/config/safety.html) define the safe limits/conditions under which you can safely use PX4, and the action that will be performed if a failsafe is triggered (for example, landing, holding position, or returning to a specified point).
 
 In SITL some failsafes are disabled by default to enable easier simulation usage. This topic explains how you can test safety-critical behavior in SITL simulation before attempting it in the real world.
 
 > **Note** You can also test failsafes using [HITL simulation](../simulation/hitl.md). HITL uses the normal configuration parameters of your flight controller.
+
+<span></span>
+
+> **Tip** The [SITL parameters](../advanced/parameter_reference.md#sitl) allow you to simulate other common sensor failure cases that are not covered here, including: loss of barometer, gyro and accelerometer, increased GPS noise etc.
 
 ## Data Link Loss
 
@@ -34,4 +38,4 @@ To control how fast the battery depletes to the minimal value use the parameter 
 
 ## GPS Loss
 
-To make simulate losing and regaining GPS information you can just stop/restart the GPS driver. This is done by running the `gpssim stop` and `gpssim start` commands on your SITL instance *pxh shell*.
+To simulate losing and regaining GPS information you can just stop the publication of GPS messages. This is done by running the `param set SIM_GPS_BLOCK 1` and `param set SIM_GPS_BLOCK 0` commands on your SITL instance *pxh shell* to block and unblock messages respectively.

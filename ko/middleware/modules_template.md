@@ -1,27 +1,27 @@
-# Modules Reference: Template
+# 모듈 레퍼런스: 템플릿
 
-## module
+## 모듈
 
 Source: [templates/module](https://github.com/PX4/Firmware/tree/master/src/templates/module)
 
-### Description
+### 설명
 
-Section that describes the provided module functionality.
+제공하는 모듈 기능을 설명하는 섹션입니다.
 
-This is a template for a module running as a task in the background with start/stop/status functionality.
+시작/종료/상태 기능을 가진 백그라운드에서 수행되는 작업을 수행하는 모듈을 위한 템플릿입니다.
 
-### Implementation
+### 구현
 
-Section describing the high-level implementation of this module.
+이 모듈을 구현하는 방법을 설명하는 섹션
 
 ### Examples
 
-CLI usage example:
+CLI 사용 예:
 
     module start -f -p 42
     
 
-### Usage {#module_usage}
+### 사용법 {#module_usage}
 
     module <command> [arguments...]
      Commands:
@@ -29,6 +29,25 @@ CLI usage example:
          [-f]        Optional example flag
          [-p <val>]  Optional example parameter
                      default: 0
+    
+       stop
+    
+       status        print status info
+    
+
+## work_item_example
+
+Source: [examples/work_item](https://github.com/PX4/Firmware/tree/master/src/examples/work_item)
+
+### Description
+
+Example of a simple module running out of a work queue.
+
+### Usage {#work_item_example_usage}
+
+    work_item_example <command> [arguments...]
+     Commands:
+       start
     
        stop
     

@@ -39,7 +39,7 @@ param show -c
 
 ### 导出和加载参数
 
-您可以保存自上次将所有参数重置为其固件定义的默认值以来 *touched* 的任何参数（这包括已更改的任何参数，即使这些参数已更改为默认值）。
+You can save any parameters that have been *touched* since all parameters were last reset to their firmware-defined defaults (this includes any parameters that have been changed, even if they have been changed back to their default).
 
 标准的 `param save ` 命令将参数存储在当前默认文件中:
 
@@ -98,10 +98,10 @@ param save /fs/microsd/vtol_param_backup
     
     C++ api 提供宏将参数声明为 *class 属性*。 您可以添加一些 "样板" 代码，以定期侦听与 *any* 参数更新相关的 [uORB topic](../middleware/uorb.md) 中的更改。 然后，框架代码（无形地）处理跟踪影响参数属性并保持它们同步的 uORB 消息。 在代码的其余部分中，您只需使用定义的参数属性，它们将始终是最新的!
     
-    首先在模块或驱动程序的类标题中包含 **px4_module_params.h**（以获取 `DEFINE_PARAMETERS` 宏）：
+    首先在模块或驱动程序的类标题中包含 **px4_platform_common/module_params.h**（以获取 `DEFINE_PARAMETERS` 宏）：
     
     ```cpp
-    #include <px4_module_params.h>
+    #include <px4_platform_common/module_params.h>
     ```
     
     从 `ModuleParams` 派生类，并使用 `DEFINE_PARAMETERS` 指定参数及其关联参数属性的列表。 参数的名称必须与其参数元数据定义相同。
@@ -217,11 +217,17 @@ param save /fs/microsd/vtol_param_backup
     
     > **Tip** 正确的元数据对于在地面站获得良好的用户体验至关重要。
     
-    参数元数据可以存储在源树中的任何位置，存储在具有扩展名的文件中 **.c**。 通常，它与关联的模块一起存储。
+    Parameter metadata can be stored anywhere in the source tree as either **.c** or **.yaml** parameter definitions (the YAML definition is newer, and more flexible). 通常，它与关联的模块一起存储。
     
     构建系统提取 metadata（使用 `make parameters_metadata`）来构建 [parameter reference ](../advanced/parameter_reference.md) 和地面站使用的参数信息。
     
-    参数元数据部分如下例所示:
+    > **Warning** After adding a *new* parameter file you should call `make clean` before building to generate the new parameters (parameter files are added as part of the *cmake* configure step, which happens for clean builds and if a cmake file is modified).
+    
+    ### c 参数 Metadata {#c_metadata}
+    
+    The legacy approach for defining parameter metadata is in a file with extension **.c** (at time of writing this is the approach most commonly used in the source tree).
+    
+    Parameter metadata sections look like the following examples:
     
     ```cpp
     /**
@@ -251,9 +257,9 @@ param save /fs/microsd/vtol_param_backup
     PARAM_DEFINE_INT32(ATT_ACC_COMP, 1);
     ```
     
-    末尾的 `PARAM_DEFINE_*` 宏指定参数的类型 (`PARAM_DEFINE_FLOAT` 或 `PARAM_DEFINE_INT32`)、参数的名称 (必须与代码中使用的名称匹配) 以及固件中的默认值。
+    末尾的 `PARAM_DEFINE_*` 宏指定参数的类型（`PARAM_DEFINE_FLOAT` 或 `PARAM_DEFINE_INT32`）、参数的名称（必须与代码中使用的名称匹配）以及固件中的默认值。
     
-    注释块中的行都是可选的，主要用于控制地面站内的显示和编辑选项。 下面给出了每行的用途 (有关详细信息, 请参阅 [module_schema.yaml](https://github.com/PX4/Firmware/blob/master/validation/module_schema.yaml))。
+    注释块中的行都是可选的，主要用于控制地面站内的显示和编辑选项。 下面给出了每行的用途（有关详细信息，请参阅 [module_schema.yaml](https://github.com/PX4/Firmware/blob/master/validation/module_schema.yaml)）。
     
     ```cpp
     /**
@@ -271,3 +277,34 @@ param save /fs/microsd/vtol_param_backup
      * @group <a title for parameters that form a group>
      */
     ```
+    
+    ### YAML Metadata {#yaml_metadata}
+    
+    > **Note** At time of writing YAML parameter definitions cannot be used in *libraries*.
+    
+    YAML meta data is intended as a full replacement for the **.c** definitions. It supports all the same metadata, along with new features like multi-instance definitions.
+    
+    - The YAML parameter metadata schema is here: [validation/module_schema.yaml](https://github.com/PX4/Firmware/blob/master/validation/module_schema.yaml).
+    - An example of YAML definitions being used can be found in the MAVLink parameter definitions: [/src/modules/mavlink/module.yaml](https://github.com/PX4/Firmware/blob/master/src/modules/mavlink/module.yaml).
+    #### Multi-Instance (Templated) Meta Data {#multi_instance_metadata}
+    
+    Templated parameter definitions are supported in [YAML parameter definitions](https://github.com/PX4/Firmware/blob/master/validation/module_schema.yaml) (templated parameter code is not supported).
+    
+    The YAML allows you to define instance numbers in parameter names, descriptions, etc. using `${i}`. For example, below will generate MY_PARAM_1_RATE, MY_PARAM_2_RATE etc.
+    
+        MY_PARAM_${i}_RATE:
+                    description:
+                        short: Maximum rate for instance ${i}
+        
+    
+    The following YAML definitions provide the start and end indexes.
+    
+    - `num_instances` (default 1): Number of instances to generate (>=1)
+    - `instance_start` (default 0): First instance number. If 0, `${i}` expands to [0, N-1]`.
+    
+    For a full example see the MAVLink parameter definitions: [/src/modules/mavlink/module.yaml](https://github.com/PX4/Firmware/blob/master/src/modules/mavlink/module.yaml)
+    
+    ## 更多信息
+    
+    - [Finding/Updating Parameters](https://docs.px4.io/master/en/advanced_config/parameters.html) (PX4 User Guide)
+    - [Parameter Reference](../advanced/parameter_reference.md)

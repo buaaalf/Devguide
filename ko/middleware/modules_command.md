@@ -1,10 +1,10 @@
-# Modules Reference: Command
+# 모들 레퍼런스: 명령어
 
 ## bl_update
 
 Source: [systemcmds/bl_update](https://github.com/PX4/Firmware/tree/master/src/systemcmds/bl_update)
 
-Utility to flash the bootloader from a file
+파일에서 부트로터를 플래시하기 위한 유틸리티
 
 ### Usage {#bl_update_usage}
 
@@ -13,37 +13,6 @@ Utility to flash the bootloader from a file
                      state)
     
        <file>        Bootloader bin file
-    
-
-## config
-
-Source: [systemcmds/config](https://github.com/PX4/Firmware/tree/master/src/systemcmds/config)
-
-Configure a sensor driver (sampling & publication rate, range, etc.)
-
-### Usage {#config_usage}
-
-    config <command> [arguments...]
-     Commands:
-    
-     The <file:dev> argument is typically one of /dev/{gyro,accel,mag}i
-       block         Block sensor topic publication
-         <file:dev>  Sensor device file
-    
-       unblock       Unblock sensor topic publication
-         <file:dev>  Sensor device file
-    
-       sampling      Set sensor sampling rate
-         <file:dev> <rate> Sensor device file and sampling rate in Hz
-    
-       rate          Set sensor publication rate
-         <file:dev> <rate> Sensor device file and publication rate in Hz
-    
-       range         Set sensor measurement range
-         <file:dev> <rate> Sensor device file and range
-    
-       check         Perform sensor self-test (and print info)
-         <file:dev>  Sensor device file
     
 
 ## dumpfile
@@ -86,10 +55,10 @@ Tool for ESC calibration
 
 Calibration procedure (running the command will guide you through it):
 
-- Remove props, power off the ESC's
-- Stop attitude controllers: mc_att_control stop, fw_att_control stop
-- Make sure safety is off
-- Run this command
+- ESC의 프로브를 빼고 파워를 끄세요
+- Stop attitude and rate controllers: mc_rate_control stop, fw_att_control stop
+- safety가 off인지 확인하세요
+- 이 명령어를 실행하세요
 
 ### Usage {#esc_calib_usage}
 
@@ -132,6 +101,19 @@ Used in startup scripts to handle hardfaults
                      uncommited hardfault (returned as the exit code of the program)
     
        reset         Reset the reboot counter
+    
+
+## i2cdetect
+
+Source: [systemcmds/i2cdetect](https://github.com/PX4/Firmware/tree/master/src/systemcmds/i2cdetect)
+
+Utility to scan for I2C devices on a particular bus.
+
+### Usage {#i2cdetect_usage}
+
+    i2cdetect [arguments...]
+         [-b <val>]  I2C bus
+                     default: 1
     
 
 ## led_control
@@ -190,6 +172,8 @@ Source: [systemcmds/topic_listener](https://github.com/PX4/Firmware/tree/master/
 
 Utility to listen on uORB topics and print the data to the console.
 
+The listener can be exited any time by pressing Ctrl+C, Esc, or Q.
+
 ### Usage {#listener_usage}
 
     listener <command> [arguments...]
@@ -234,24 +218,28 @@ Application to test motor ramp up.
 
 Before starting, make sure to stop any running attitude controller:
 
-    mc_att_control stop
+    mc_rate_control stop
     fw_att_control stop
     
 
 When starting, a background task is started, runs for several seconds (as specified), then exits.
 
-Note: this command currently only supports the `/dev/pwm_output0` output.
-
 ### Example
 
-    motor_ramp sine 1100 0.5
+    motor_ramp sine -a 1100 -r 0.5
     
 
 ### Usage {#motor_ramp_usage}
 
     motor_ramp [arguments...]
          ramp|sine|square mode
-         <min_pwm> <time> [<max_pwm>] pwm value in us, time in sec
+         [-d <val>]  Pwm output device
+                     default: /dev/pwm_output0
+         -a <val>    Select minimum pwm duty cycle in usec
+         [-b <val>]  Select maximum pwm duty cycle in usec
+                     default: 2000
+         [-r <val>]  Select motor ramp duration in sec
+                     default: 1.0
     
      WARNING: motors will ramp up to full speed!
     
@@ -262,7 +250,7 @@ Source: [systemcmds/motor_test](https://github.com/PX4/Firmware/tree/master/src/
 
 Utility to test motors.
 
-Note: this can only be used for drivers which support the motor_test uorb topic (currently uavcan and tap_esc)
+WARNING: remove all props before using this command.
 
 ### Usage {#motor_test_usage}
 
@@ -271,6 +259,10 @@ Note: this can only be used for drivers which support the motor_test uorb topic 
        test          Set motor(s) to a specific output value
          [-m <val>]  Motor to test (0...7, all if not specified)
          [-p <val>]  Power (0...100)
+                     default: 0
+         [-t <val>]  Timeout in seconds (default=no timeout)
+                     default: 0
+         [-i <val>]  driver instance
                      default: 0
     
        stop          Stop all motors
@@ -372,10 +364,13 @@ Change the airframe and make sure the airframe's default parameters are loaded:
          [fail]      If provided, let the command fail if param is not found
     
        compare       Compare a param with a value. Command will succeed if equal
+         [-s]        If provided, silent errors if parameter doesn't exists
          <param_name> <value> Parameter name and value to compare
     
        greater       Compare a param with a value. Command will succeed if param is
                      greater than the value
+         [-s]        If provided, silent errors if parameter doesn't exists
+         <param_name> <value> Parameter name and value to compare
          <param_name> <value> Parameter name and value to compare
     
        touch         Mark a parameter as used

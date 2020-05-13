@@ -2,7 +2,7 @@
 
 The PX4 startup is controlled by shell scripts. On NuttX they reside in the [ROMFS/px4fmu_common/init.d](https://github.com/PX4/Firmware/tree/master/ROMFS/px4fmu_common/init.d) folder - some of these are also used on Posix (Linux/MacOS). The scripts that are only used on Posix are located in [ROMFS/px4fmu_common/init.d-posix](https://github.com/PX4/Firmware/tree/master/ROMFS/px4fmu_common/init.d-posix).
 
-All files starting with a number and underscore (e.g. `10000_airplane`) are canned airframe configurations. They are exported at build-time into an `airframes.xml` file which is parsed by [QGroundControl](http://qgroundcontrol.com) for the airframe selection UI. Adding a new configuration is covered [here](../airframes/adding_a_new_frame.md).
+All files starting with a number and underscore (e.g. `10000_airplane`) are predefined airframe configurations. They are exported at build-time into an `airframes.xml` file which is parsed by [QGroundControl](http://qgroundcontrol.com) for the airframe selection UI. Adding a new configuration is covered [here](../airframes/adding_a_new_frame.md).
 
 The remaining files are part of the general startup logic. The first executed file is the [init.d/rcS](https://github.com/PX4/Firmware/blob/master/ROMFS/px4fmu_common/init.d/rcS) script (or [init.d-posix/rcS](https://github.com/PX4/Firmware/blob/master/ROMFS/px4fmu_common/init.d-posix/rcS) on Posix), which calls all other scripts.
 
@@ -26,9 +26,16 @@ The modules can be executed from any terminal when PX4 is already running on a s
     ./px4-listener sensor_accel
     
 
+### Dynamic modules
+
+Normally, all modules are compiled into a single PX4 executable. However, on Posix, there's the option of compiling a module into a separate file, which can be loaded into PX4 using the `dyn` command.
+
+    dyn ./test.px4mod
+    
+
 ## NuttX
 
-NuttX has an integrated shell interpreter ([NSH](http://nuttx.org/Documentation/NuttShell.html)), and thus scripts can be executed directly.
+NuttX has an integrated shell interpreter ([NuttShell (NSH)](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=139629410)), and thus scripts can be executed directly.
 
 ### Debugging the System Boot
 

@@ -1,5 +1,90 @@
 # Modules Reference: System
 
+## battery_status
+
+Source: [modules/battery_status](https://github.com/PX4/Firmware/tree/master/src/modules/battery_status)
+
+### Description
+
+The provided functionality includes:
+
+- Read the output from the ADC driver (via ioctl interface) and publish `battery_status`.
+
+### Implementation
+
+It runs in its own thread and polls on the currently selected gyro topic.
+
+### Usage {#battery_status_usage}
+
+    battery_status <command> [arguments...]
+     Commands:
+       start
+    
+       stop
+    
+       status        print status info
+    
+
+## camera_feedback
+
+Source: [modules/camera_feedback](https://github.com/PX4/Firmware/tree/master/src/modules/camera_feedback)
+
+### Description
+
+### Usage {#camera_feedback_usage}
+
+    camera_feedback <command> [arguments...]
+     Commands:
+       start
+    
+       stop
+    
+       status        print status info
+    
+
+## commander
+
+Source: [modules/commander](https://github.com/PX4/Firmware/tree/master/src/modules/commander)
+
+### Description
+
+The commander module contains the state machine for mode switching and failsafe behavior.
+
+### Usage {#commander_usage}
+
+    commander <command> [arguments...]
+     Commands:
+       start
+         [-h]        Enable HIL mode
+    
+       calibrate     Run sensor calibration
+         mag|accel|gyro|level|esc|airspeed Calibration type
+    
+       check         Run preflight checks
+    
+       arm
+         [-f]        Force arming (do not run preflight checks)
+    
+       disarm
+    
+       takeoff
+    
+       land
+    
+       transition    VTOL transition
+    
+       mode          Change flight mode
+         manual|acro|offboard|stabilized|rattitude|altctl|posctl|auto:mission|auto:l
+                     oiter|auto:rtl|auto:takeoff|auto:land|auto:precland Flight mode
+    
+       lockdown
+         [off]       Turn lockdown off
+    
+       stop
+    
+       status        print status info
+    
+
 ## dataman
 
 Source: [modules/dataman](https://github.com/PX4/Firmware/tree/master/src/modules/dataman)
@@ -43,6 +128,47 @@ Reading and writing a single item is always atomic. If multiple items need to be
        status        print status info
     
 
+## dmesg
+
+Source: [systemcmds/dmesg](https://github.com/PX4/Firmware/tree/master/src/systemcmds/dmesg)
+
+### Description
+
+Command-line tool to show bootup console messages. Note that output from NuttX's work queues and syslog are not captured.
+
+### Examples
+
+Keep printing all messages in the background:
+
+    dmesg -f &
+    
+
+### Usage {#dmesg_usage}
+
+    dmesg <command> [arguments...]
+     Commands:
+         [-f]        Follow: wait for new messages
+    
+
+## esc_battery
+
+Source: [modules/esc_battery](https://github.com/PX4/Firmware/tree/master/src/modules/esc_battery)
+
+### Description
+
+This implements using information from the ESC status and publish it as battery status.
+
+### Usage {#esc_battery_usage}
+
+    esc_battery <command> [arguments...]
+     Commands:
+       start
+    
+       stop
+    
+       status        print status info
+    
+
 ## heater
 
 Source: [drivers/heater](https://github.com/PX4/Firmware/tree/master/src/drivers/heater)
@@ -57,27 +183,7 @@ This task can be started at boot from the startup scripts by setting SENS_EN_THE
 
     heater <command> [arguments...]
      Commands:
-       controller_period Reports the heater driver cycle period value, (us), and
-                     sets it if supplied an argument.
-    
-       integrator    Sets the integrator gain value if supplied an argument and
-                     reports the current value.
-    
-       proportional  Sets the proportional gain value if supplied an argument and
-                     reports the current value.
-    
-       sensor_id     Reports the current IMU the heater is temperature controlling.
-    
-       setpoint      Reports the current IMU temperature.
-    
-       start         Starts the IMU heater driver as a background task
-    
-       status        Reports the current IMU temperature, temperature setpoint, and
-                     heater on/off status.
-    
-       stop          Stops the IMU heater driver.
-    
-       temp          Reports the current IMU temperature.
+       start
     
        stop
     
@@ -111,7 +217,7 @@ The module runs periodically on the HP work queue.
     land_detector <command> [arguments...]
      Commands:
        start         Start the background task
-         fixedwing|multicopter|vtol|ugv Select vehicle type
+         fixedwing|multicopter|vtol|rover Select vehicle type
     
        stop
     
@@ -184,6 +290,7 @@ Or if already running:
        start
          [-m <val>]  Backend mode
                      values: file|mavlink|all, default: all
+         [-x]        Enable/disable logging via Aux1 RC channel
          [-e]        Enable logging right after start until disarm (otherwise only
                      when armed)
          [-f]        Log until shutdown (implies -e)
@@ -192,8 +299,6 @@ Or if already running:
                      default: 280
          [-b <val>]  Log buffer size in KiB
                      default: 12
-         [-q <val>]  uORB queue size for mavlink mode
-                     default: 14
          [-p <val>]  Poll on a topic instead of running with fixed rate (Log rate
                      and topic intervals are ignored if this is set)
                      values: <topic_name>
@@ -201,6 +306,50 @@ Or if already running:
        on            start logging now, override arming (logger must be running)
     
        off           stop logging now, override arming (logger must be running)
+    
+       stop
+    
+       status        print status info
+    
+
+## pwm_input
+
+Source: [drivers/pwm_input](https://github.com/PX4/Firmware/tree/master/src/drivers/pwm_input)
+
+### Description
+
+Measures the PWM input on AUX5 (or MAIN5) via a timer capture ISR and publishes via the uORB 'pwm_input` message.
+
+### Usage {#pwm_input_usage}
+
+    pwm_input <command> [arguments...]
+     Commands:
+       start
+    
+       test          prints PWM capture info.
+    
+       stop
+    
+       status        print status info
+    
+
+## rc_update
+
+Source: [modules/rc_update](https://github.com/PX4/Firmware/tree/master/src/modules/rc_update)
+
+### Description
+
+The rc_update module handles RC channel mapping: read the raw input channels (`input_rc`), then apply the calibration, map the RC channels to the configured channels & mode switches, low-pass filter, and then publish as `rc_channels` and `manual_control_setpoint`.
+
+### Implementation
+
+To reduce control latency, the module is scheduled on input_rc publications.
+
+### Usage {#rc_update_usage}
+
+    rc_update <command> [arguments...]
+     Commands:
+       start
     
        stop
     
@@ -222,7 +371,7 @@ There are 2 environment variables used for configuration: `replay`, which must b
 
 The module is typically used together with uORB publisher rules, to specify which messages should be replayed. The replay module will just publish all messages that are found in the log. It also applies the parameters from the log.
 
-The replay procedure is documented on the [System-wide Replay](https://dev.px4.io/en/debug/system_wide_replay.html) page.
+The replay procedure is documented on the [System-wide Replay](https://dev.px4.io/master/en/debug/system_wide_replay.html) page.
 
 ### Usage {#replay_usage}
 
@@ -245,7 +394,7 @@ Source: [modules/events](https://github.com/PX4/Firmware/tree/master/src/modules
 
 ### Description
 
-Background process running periodically on the LP work queue to perform housekeeping tasks. It is currently only responsible for temperature calibration and tone alarm on RC Loss.
+Background process running periodically on the LP work queue to perform housekeeping tasks. It is currently only responsible for tone alarm on RC Loss.
 
 The tasks can be started via CLI or uORB topics (vehicle_command from MAVLink, etc.).
 
@@ -254,12 +403,6 @@ The tasks can be started via CLI or uORB topics (vehicle_command from MAVLink, e
     send_event <command> [arguments...]
      Commands:
        start         Start the background task
-    
-       temperature_calibration Run temperature calibration process
-         [-g]        calibrate the gyro
-         [-a]        calibrate the accel
-         [-b]        calibrate the baro (if none of these is given, all will be
-                     calibrated)
     
        stop
     
@@ -277,8 +420,6 @@ The sensors module is central to the whole system. It takes low-level output fro
 The provided functionality includes:
 
 - Read the output from the sensor drivers (`sensor_gyro`, etc.). If there are multiple of the same type, do voting and failover handling. Then apply the board rotation and temperature calibration (if enabled). And finally publish the data; one of the topics is `sensor_combined`, used by many parts of the system.
-- Do RC channel mapping: read the raw input channels (`input_rc`), then apply the calibration, map the RC channels to the configured channels & mode switches, low-pass filter, and then publish as `rc_channels` and `manual_control_setpoint`.
-- Read the output from the ADC driver (via ioctl interface) and publish `battery_status`.
 - Make sure the sensor drivers get the updated calibration parameters (scale & offset) when the parameters change or on startup. The sensor drivers use the ioctl interface for parameter updates. For this to work properly, the sensor drivers must already be running when `sensors` is started.
 - Do preflight sensor consistency checks and publish the `sensor_preflight` topic.
 
@@ -292,6 +433,32 @@ It runs in its own thread and polls on the currently selected gyro topic.
      Commands:
        start
          [-h]        Start in HIL mode
+    
+       stop
+    
+       status        print status info
+    
+
+## temperature_compensation
+
+Source: [modules/temperature_compensation](https://github.com/PX4/Firmware/tree/master/src/modules/temperature_compensation)
+
+### Description
+
+The temperature compensation module allows all of the gyro(s), accel(s), and baro(s) in the system to be temperature compensated. The module monitors the data coming from the sensors and updates the associated sensor_thermal_cal topic whenever a change in temperature is detected. The module can also be configured to perform the coeffecient calculation routine at next boot, which allows the thermal calibration coeffecients to be calculated while the vehicle undergoes a temperature cycle.
+
+### Usage {#temperature_compensation_usage}
+
+    temperature_compensation <command> [arguments...]
+     Commands:
+       start         Start the module, which monitors the sensors and updates the
+                     sensor_thermal_cal topic
+    
+       calibrate     Run temperature calibration process
+         [-g]        calibrate the gyro
+         [-a]        calibrate the accel
+         [-b]        calibrate the baro (if none of these is given, all will be
+                     calibrated)
     
        stop
     
@@ -334,3 +501,22 @@ Play system tune #2:
        libtest       Test library
     
        stop          Stop playback (use for repeated tunes)
+    
+
+## work_queue
+
+Source: [systemcmds/work_queue](https://github.com/PX4/Firmware/tree/master/src/systemcmds/work_queue)
+
+### Description
+
+Command-line tool to show work queue status.
+
+### Usage {#work_queue_usage}
+
+    work_queue <command> [arguments...]
+     Commands:
+       start
+    
+       stop
+    
+       status        print status info

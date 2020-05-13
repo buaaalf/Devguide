@@ -38,11 +38,11 @@ The hardware setup consists of the following parts:
 On TX (UAV) side:
 * [NanoPI NEO2](http://www.friendlyarm.com/index.php?route=product/product&product_id=180) (and/or Raspberry Pi if using Pi camera).
 * [Logitech camera C920](https://www.logitech.com/en-us/product/hd-pro-webcam-c920?crid=34) or [Raspberry Pi camera](https://www.raspberrypi.org/products/camera-module-v2/).
-* WiFi module  [ALPHA AWUS036ACH](https://www.alfa.com.tw/WiFi%20USB%20Antenna.html).
+* WiFi module  [ALPHA AWUS036ACH](https://www.alfa.com.tw/products_detail/1.htm).
 
 On RX (ground station side):
 * Any computer with Linux (tested on Fedora 25 x86-64).
-* WiFi module  [ALPHA AWUS036ACH](https://www.alfa.com.tw/WiFi%20USB%20Antenna.html). 
+* WiFi module  [ALPHA AWUS036ACH](https://www.alfa.com.tw/products_detail/1.htm). 
   See [wifibroadcast wiki > WiFi hardware](https://github.com/svpcom/wifibroadcast/wiki/WiFi-hardware) for more information on supported modules.
 
 If you don't need high-power cards, you can use any card with **rtl8812au** chipset.
@@ -154,7 +154,7 @@ Wifibroadcast puts the WiFi cards into monitor mode. This mode allows to send an
 Board | Pros  | Cons
 --- | --- | ---
 [Raspberry Pi Zero](https://www.raspberrypi.org/products/raspberry-pi-zero/) | - Huge community<br>- Camera support<br>- HW video encoder/decoder with OMX API. | - Hard to buy outside US (shipping costs >> its price)<br>- Slow CPU<br>- Only one USB bus<br>- 512MB SDRAM
-[Odroid C0](http://www.hardkernel.com/main/products/prdt_info.php?g_code=G145326484280) | - Fast CPU<br>- EMMC<br>- 1GB SDRAM | - Very sensitive to radio interference<br>- Doesn't supported by mainline kernel<br>- High cost<br>- HW video encoder is broken<br>- Bad PCB quality (too thin, ground pins without [thermal relief](https://en.wikipedia.org/wiki/Thermal_relief))
+[Odroid C0](https://www.hardkernel.com/shop/odroid-c0/) | - Fast CPU<br>- EMMC<br>- 1GB SDRAM | - Very sensitive to radio interference<br>- Doesn't supported by mainline kernel<br>- High cost<br>- HW video encoder is broken<br>- Bad PCB quality (too thin, ground pins without [thermal relief](https://en.wikipedia.org/wiki/Thermal_relief))
 [NanoPI NEO2](http://www.friendlyarm.com/index.php?route=product/product&product_id=180) | - ARM 64-bit CPU<br>- Very cheap<br>- Supported by mainline kernel<br>- 3 independent USB busses<br>- 1Gbps Ethernet port<br>- 3 UARTs<br>- Very small form-factor<br>- Resistant to radio interference | - Small community<br>- 512MB SDRAM<br>- No camera interface
 
 This article chose to use Pi Zero as camera board (encode video) and NEO2 as main UAV board (wifibroadcast, MAVLink telemetry, etc.)

@@ -24,6 +24,24 @@ battery_status <command> [arguments...]
 
    status        print status info
 ```
+## camera_feedback
+Source: [modules/camera_feedback](https://github.com/PX4/Firmware/tree/master/src/modules/camera_feedback)
+
+
+### Description
+
+
+
+### Usage {#camera_feedback_usage}
+```
+camera_feedback <command> [arguments...]
+ Commands:
+   start
+
+   stop
+
+   status        print status info
+```
 ## commander
 Source: [modules/commander](https://github.com/PX4/Firmware/tree/master/src/modules/commander)
 
@@ -133,6 +151,24 @@ dmesg <command> [arguments...]
  Commands:
      [-f]        Follow: wait for new messages
 ```
+## esc_battery
+Source: [modules/esc_battery](https://github.com/PX4/Firmware/tree/master/src/modules/esc_battery)
+
+
+### Description
+This implements using information from the ESC status and publish it as battery status.
+
+
+### Usage {#esc_battery_usage}
+```
+esc_battery <command> [arguments...]
+ Commands:
+   start
+
+   stop
+
+   status        print status info
+```
 ## heater
 Source: [drivers/heater](https://github.com/PX4/Firmware/tree/master/src/drivers/heater)
 
@@ -146,27 +182,7 @@ This task can be started at boot from the startup scripts by setting SENS_EN_THE
 ```
 heater <command> [arguments...]
  Commands:
-   controller_period Reports the heater driver cycle period value, (us), and
-                 sets it if supplied an argument.
-
-   integrator    Sets the integrator gain value if supplied an argument and
-                 reports the current value.
-
-   proportional  Sets the proportional gain value if supplied an argument and
-                 reports the current value.
-
-   sensor_id     Reports the current IMU the heater is temperature controlling.
-
-   setpoint      Reports the current IMU temperature.
-
-   start         Starts the IMU heater driver as a background task
-
-   status        Reports the current IMU temperature, temperature setpoint, and
-                 heater on/off status.
-
-   stop          Stops the IMU heater driver.
-
-   temp          Reports the current IMU temperature.
+   start
 
    stop
 
@@ -299,6 +315,49 @@ logger <command> [arguments...]
 
    status        print status info
 ```
+## pwm_input
+Source: [drivers/pwm_input](https://github.com/PX4/Firmware/tree/master/src/drivers/pwm_input)
+
+
+### Description
+Measures the PWM input on AUX5 (or MAIN5) via a timer capture ISR and publishes via the uORB 'pwm_input` message.
+
+
+### Usage {#pwm_input_usage}
+```
+pwm_input <command> [arguments...]
+ Commands:
+   start
+
+   test          prints PWM capture info.
+
+   stop
+
+   status        print status info
+```
+## rc_update
+Source: [modules/rc_update](https://github.com/PX4/Firmware/tree/master/src/modules/rc_update)
+
+
+### Description
+The rc_update module handles RC channel mapping: read the raw input channels (`input_rc`),
+then apply the calibration, map the RC channels to the configured channels & mode switches,
+low-pass filter, and then publish as `rc_channels` and `manual_control_setpoint`.
+
+### Implementation
+To reduce control latency, the module is scheduled on input_rc publications.
+
+
+### Usage {#rc_update_usage}
+```
+rc_update <command> [arguments...]
+ Commands:
+   start
+
+   stop
+
+   status        print status info
+```
 ## replay
 Source: [modules/replay](https://github.com/PX4/Firmware/tree/master/src/modules/replay)
 
@@ -317,7 +376,7 @@ The module is typically used together with uORB publisher rules, to specify whic
 The replay module will just publish all messages that are found in the log. It also applies the parameters from
 the log.
 
-The replay procedure is documented on the [System-wide Replay](https://dev.px4.io/en/debug/system_wide_replay.html)
+The replay procedure is documented on the [System-wide Replay](https://dev.px4.io/master/en/debug/system_wide_replay.html)
 page.
 
 ### Usage {#replay_usage}
@@ -340,7 +399,7 @@ Source: [modules/events](https://github.com/PX4/Firmware/tree/master/src/modules
 
 ### Description
 Background process running periodically on the LP work queue to perform housekeeping tasks.
-It is currently only responsible for temperature calibration and tone alarm on RC Loss.
+It is currently only responsible for tone alarm on RC Loss.
 
 The tasks can be started via CLI or uORB topics (vehicle_command from MAVLink, etc.).
 
@@ -349,12 +408,6 @@ The tasks can be started via CLI or uORB topics (vehicle_command from MAVLink, e
 send_event <command> [arguments...]
  Commands:
    start         Start the background task
-
-   temperature_calibration Run temperature calibration process
-     [-g]        calibrate the gyro
-     [-a]        calibrate the accel
-     [-b]        calibrate the baro (if none of these is given, all will be
-                 calibrated)
 
    stop
 
@@ -373,9 +426,6 @@ The provided functionality includes:
   If there are multiple of the same type, do voting and failover handling.
   Then apply the board rotation and temperature calibration (if enabled). And finally publish the data; one of the
   topics is `sensor_combined`, used by many parts of the system.
-- Do RC channel mapping: read the raw input channels (`input_rc`), then apply the calibration, map the RC channels
-  to the configured channels & mode switches, low-pass filter, and then publish as `rc_channels` and
-  `manual_control_setpoint`.
 - Make sure the sensor drivers get the updated calibration parameters (scale & offset) when the parameters change or
   on startup. The sensor drivers use the ioctl interface for parameter updates. For this to work properly, the
   sensor drivers must already be running when `sensors` is started.
@@ -391,6 +441,35 @@ sensors <command> [arguments...]
  Commands:
    start
      [-h]        Start in HIL mode
+
+   stop
+
+   status        print status info
+```
+## temperature_compensation
+Source: [modules/temperature_compensation](https://github.com/PX4/Firmware/tree/master/src/modules/temperature_compensation)
+
+
+### Description
+The temperature compensation module allows all of the gyro(s), accel(s), and baro(s) in the system to be temperature
+compensated. The module monitors the data coming from the sensors and updates the associated sensor_thermal_cal topic
+whenever a change in temperature is detected. The module can also be configured to perform the coeffecient calculation
+routine at next boot, which allows the thermal calibration coeffecients to be calculated while the vehicle undergoes
+a temperature cycle.
+
+
+### Usage {#temperature_compensation_usage}
+```
+temperature_compensation <command> [arguments...]
+ Commands:
+   start         Start the module, which monitors the sensors and updates the
+                 sensor_thermal_cal topic
+
+   calibrate     Run temperature calibration process
+     [-g]        calibrate the gyro
+     [-a]        calibrate the accel
+     [-b]        calibrate the baro (if none of these is given, all will be
+                 calibrated)
 
    stop
 

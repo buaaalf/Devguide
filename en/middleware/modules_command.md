@@ -12,34 +12,6 @@ bl_update [arguments...]
 
    <file>        Bootloader bin file
 ```
-## config
-Source: [systemcmds/config](https://github.com/PX4/Firmware/tree/master/src/systemcmds/config)
-
-Configure a sensor driver (sampling & publication rate, range, etc.)
-### Usage {#config_usage}
-```
-config <command> [arguments...]
- Commands:
-
- The <file:dev> argument is typically one of /dev/{gyro,accel,mag}i
-   block         Block sensor topic publication
-     <file:dev>  Sensor device file
-
-   unblock       Unblock sensor topic publication
-     <file:dev>  Sensor device file
-
-   sampling      Set sensor sampling rate
-     <file:dev> <rate> Sensor device file and sampling rate in Hz
-
-   rate          Set sensor publication rate
-     <file:dev> <rate> Sensor device file and publication rate in Hz
-
-   range         Set sensor measurement range
-     <file:dev> <rate> Sensor device file and range
-
-   check         Perform sensor self-test (and print info)
-     <file:dev>  Sensor device file
-```
 ## dumpfile
 Source: [systemcmds/dumpfile](https://github.com/PX4/Firmware/tree/master/src/systemcmds/dumpfile)
 
@@ -75,7 +47,7 @@ Tool for ESC calibration
 
 Calibration procedure (running the command will guide you through it):
 - Remove props, power off the ESC's
-- Stop attitude controllers: mc_att_control stop, fw_att_control stop
+- Stop attitude and rate controllers: mc_rate_control stop, fw_att_control stop
 - Make sure safety is off
 - Run this command
 
@@ -227,7 +199,7 @@ Application to test motor ramp up.
 
 Before starting, make sure to stop any running attitude controller:
 ```
-mc_att_control stop
+mc_rate_control stop
 fw_att_control stop
 ```
 
@@ -260,8 +232,6 @@ Utility to test motors.
 
 WARNING: remove all props before using this command.
 
-Note: this can only be used for drivers which support the motor_test uorb topic (not px4io).
-
 ### Usage {#motor_test_usage}
 ```
 motor_test <command> [arguments...]
@@ -269,6 +239,8 @@ motor_test <command> [arguments...]
    test          Set motor(s) to a specific output value
      [-m <val>]  Motor to test (0...7, all if not specified)
      [-p <val>]  Power (0...100)
+                 default: 0
+     [-t <val>]  Timeout in seconds (default=no timeout)
                  default: 0
      [-i <val>]  driver instance
                  default: 0
@@ -581,20 +553,4 @@ ver <command> [arguments...]
    hwtypecmp     Compare hardware type (returns 0 on match)
      <hwtype> [<hwtype2>] Hardware type to compare against (eg. V2). An OR
                  comparison is used if multiple are specified
-```
-## voxlpm
-Source: [drivers/power_monitor/voxlpm](https://github.com/PX4/Firmware/tree/master/src/drivers/power_monitor/voxlpm)
-
-### Usage {#voxlpm_usage}
-```
-voxlpm [arguments...]
-   start         start monitoring
-
-   info          display info
-
-   -X            PX4_I2C_BUS_EXPANSION
-
-   -T            PX4_I2C_BUS_EXPANSION1
-
-   -R            PX4_I2C_BUS_EXPANSION2 (default)
 ```

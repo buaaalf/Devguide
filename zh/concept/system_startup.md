@@ -2,7 +2,7 @@
 
 PX4 系统的启动由 shell 脚本文件控制。 在 NuttX 平台上这些脚本文件位于 [ROMFS/px4fmu_common/init.d](https://github.com/PX4/Firmware/tree/master/ROMFS/px4fmu_common/init.d) 文件夹下 - 该文件夹下的部分脚本文件也适用于 Posix (Linux/MacOS) 平台。 仅适用于 Posix 平台的启动脚本文件可以在 [ROMFS/px4fmu_common/init.d-posix](https://github.com/PX4/Firmware/tree/master/ROMFS/px4fmu_common/init.d-posix) 文件夹下找到。
 
-上述文件夹中以数字和下划线为文件名开头的脚本文件（例如，`10000_airplane`）都是封装好的机架构型配置文件。 这些文件在编译时会被导出至 `airframes.xml` 文件中，[QGroundControl](http://qgroundcontrol.com) 通过解析该 xml 文件得到可以在 UI 界面上进行选择的机架构型。 如何添加一个新的配置请参阅 [这里](../airframes/adding_a_new_frame.md)。
+All files starting with a number and underscore (e.g. `10000_airplane`) are predefined airframe configurations. 这些文件在编译时会被导出至 `airframes.xml` 文件中，[QGroundControl](http://qgroundcontrol.com) 通过解析该 xml 文件得到可以在 UI 界面上进行选择的机架构型。 如何添加一个新的配置请参阅 [这里](../airframes/adding_a_new_frame.md)。
 
 其它的文件则是系统常规启动逻辑的一部分。 在启动过程中第一个被系统执行的脚本文件是 [init.d/rcS](https://github.com/PX4/Firmware/blob/master/ROMFS/px4fmu_common/init.d/rcS) （Posix 平台则为 [init.d-posix/rcS](https://github.com/PX4/Firmware/blob/master/ROMFS/px4fmu_common/init.d-posix/rcS) on Posix)），该脚本会调用所有的其它脚本。
 
@@ -26,15 +26,22 @@ PX4 系统的启动由 shell 脚本文件控制。 在 NuttX 平台上这些脚�
     ./px4-listener sensor_accel
     
 
+### 动态模块
+
+通常，所有模块都被编入一个 PX4 可执行程序。 然而，在Posix上，可以将模块编译成单独的文件，可以使用 `dyn` 命令加载到 PX4。
+
+    dyn ./test.px4mod
+    
+
 ## NuttX
 
-NuttX 有一个内置的 shell 解释器 ([NSH](http://nuttx.org/Documentation/NuttShell.html))，因此可以直接执行启动脚本。
+NuttX has an integrated shell interpreter ([NuttShell (NSH)](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=139629410)), and thus scripts can be executed directly.
 
-### 调试系统的启动过程
+### 调试系统启动
 
-软件组件的失效可以不中止 PX4 系统的启动， 这一特性可以在启动脚本中使用 `set +e` 来实现。
+软件组件的失效不会中止 PX4 系统的启动， 可以在启动脚本中使用 `set +e` 来控制。
 
-连接至 [系统控制台（system console）](../debug/system_console.md) 后重启飞控板可以进行对系统启动引导序列进行调试。 由此生成的启动引导日志文件中包含了引导序列的详细信息，同时也应包含了解释启动中止的线索。
+可以通过连接 [system console](../debug/system_console.md) 并通过板载电源循环来调试引导顺序。 由此生成的启动引导日志文件中包含了引导序列的详细信息，同时也应包含了解释启动中止的线索。
 
 #### 启动失败的常见原因
 
@@ -47,11 +54,11 @@ NuttX 有一个内置的 shell 解释器 ([NSH](http://nuttx.org/Documentation/N
 
 ### 自定义系统的启动文件
 
-自定义系统启动的最佳方法是引入 [新的机架配置](../airframes/adding_a_new_frame.md) 。 如果只需要一些小的调整（比如多启动一个应用程序，或只是启用一个不同的混控器)，那么你可以在启动过程中使用特殊的钩子（hook）来达成目的。
+自定义系统启动的最佳方式是引入一个 [新机架配置](../airframes/adding_a_new_frame.md)。 如果只需要调整(例如开始一个更多的应用程序或仅仅使用一个不同的混音器)，在启动时可以使用特殊的钩子。
 
 > **Caution** 系统的启动文件是 UNIX 系统文件，该文件要求以 UNIX 规范的 LF 作为行结束符。 在 Windows 平台上编辑系统的启动文件应该使用一个合适的文本编辑器。
 
-主要有三类钩子（hook）， 需要注意的是 microsd 的根目录是挂载在操作系统中的 `/fs/microsd` 目录下的。
+主要有三类钩子。 请注意，microsd 卡的根文件夹已被路径 `/fs/microsd` 标识。
 
 - /fs/microsd/etc/config.txt
 - /fs/microsd/etc/extras.txt
@@ -59,11 +66,11 @@ NuttX 有一个内置的 shell 解释器 ([NSH](http://nuttx.org/Documentation/N
 
 #### 自定义配置（config.txt）
 
-`config.txt` 文件可用于修改 shell 变量。 该文件会在主系统完成配置后、 进行启动*前*进行加载。
+`config.txt` 文件可用于修改 shell 变量。 它是在主系统配置后加载的，*之前* 它已启动。
 
 #### 启动额外的应用
 
-`extras.txt` 可用于在主系统启动后启动额外的应用程序。 通常这些额外应用程序可以载荷控制器或类似的可选自定义组件。
+`extras.txt` 可以在主系统启动后启动额外的应用程序。 通常，这些是有效载荷控制器或类似的可选自定义组件。
 
 > **Caution**在系统启动文件中调用未知命令可能会导致系统引导失败。 通常情况下系统在引导失败后不会发送 mavlink 消息，所以在这种情况下请检查系统在控制台上输出的的错误消息。
 
@@ -81,11 +88,11 @@ NuttX 有一个内置的 shell 解释器 ([NSH](http://nuttx.org/Documentation/N
 
 #### 启动自定义的混控器
 
-默认情况下系统将从 `/etc/mixers` 文件夹下载入混控器。 如果在 `/fs/microsd/etc/mixers` 文件夹下存在一个同名文件，则后者将会替代默认的混控器被系统载入。 这就使得我们可以在不重新编译固件的情况下对混控器文件进行自定义修改。
+默认情况下系统将从 `/etc/mixers` 文件夹下载入混控器。 如果在`/fs/microsd/etc/mixers`中存在同名文件，则该文件将被加载。 这允许自定义混音器文件，而无需重新编译Firmware。
 
 ##### 示例
 
-下面的示例演示了如何添加一个辅助（AUX）混控器：
+下面的示例演示了如何添加一个自定义 aux 混控器：
 
 - 在 SD 卡中创建文件 `etc/mixers/gimbal.aux.mix` ，并将你的混控器设定内容写入该文件内。
 - 为了使用该混控器，再创建一个额外的文件 `etc/config.txt` ，该文件的内容如下： 
